@@ -17,6 +17,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="drawerArrowStyle">@style/Theme.NaviDoc.DrawerToggle</item>
+
+        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.NaviDoc.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" >
@@ -35,5 +39,10 @@
     </style>
 <!--        <item name="android:textColor">@color/secondary</item>-->
 
+    <style name="Theme.NaviDoc.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/primary_light_blue</item>
+        <item name="android:colorButtonNormal">@color/primary_light_blue</item>
+        <item name="android:textColor">@color/primary_white</item>
+    </style>
 
 </resources>

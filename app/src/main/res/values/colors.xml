@@ -10,4 +10,5 @@
     <color name="primary">#66B2FF</color>
     <color name="secondary">#FCB40E</color>
     <color name="primary_light_blue">#CCE5FF</color>
+    <color name="primary_white">#FFFFFF</color>
 </resources>

@@ -10,14 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.NaviDoc.AppBarOverlay">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/secondary"
-            app:popupTheme="@style/Theme.NaviDoc.PopupOverlay" />
+        <include layout="@layout/toolbar"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
