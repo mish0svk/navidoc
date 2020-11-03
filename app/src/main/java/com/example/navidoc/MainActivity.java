@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean findAndCloseNavigation()
     {
-        DrawerLayout layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout layout = findViewById(R.id.drawer_layout);
 
         if (layout.isDrawerOpen(GravityCompat.START))
         {

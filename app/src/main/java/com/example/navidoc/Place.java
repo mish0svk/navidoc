@@ -2,9 +2,9 @@ package com.example.navidoc;
 
 public class Place
 {
-    private String ambulance;
-    private String doctorsName;
-    private String department;
+    private final String ambulance;
+    private final String doctorsName;
+    private final String department;
 
     public Place(String ambulance, String doctorsName, String department)
     {

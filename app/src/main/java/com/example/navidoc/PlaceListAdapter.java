@@ -1,5 +1,6 @@
 package com.example.navidoc;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import static androidx.core.content.res.ResourcesCompat.getColor;
 
 public class PlaceListAdapter extends ArrayAdapter<Place>
 {
-    private List<Place> places;
+    private final List<Place> places;
     private final Context context;
     private final int resource;
 
@@ -29,6 +30,7 @@ public class PlaceListAdapter extends ArrayAdapter<Place>
         this.resource = resource;
     }
 
+    @SuppressLint("ViewHolder")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)

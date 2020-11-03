@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.ScrollView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -109,7 +108,7 @@ public class PlacesActivity  extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
-        DrawerLayout layout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        DrawerLayout layout = findViewById(R.id.drawer_layout);
         if (layout.isDrawerOpen(GravityCompat.START)) {
             layout.closeDrawer(GravityCompat.START);
         } else {
