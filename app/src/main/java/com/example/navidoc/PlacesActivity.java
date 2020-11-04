@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -20,8 +22,8 @@ import java.util.List;
 public class PlacesActivity  extends AppCompatActivity
 {
     private List<Place> places = new ArrayList<>();
-    private ListView listView;
-    private PlaceListAdapter placesAdapter;
+    private RecyclerView listView;
+    private PlaceRecycleAdapter placeRecycleAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -100,8 +102,10 @@ public class PlacesActivity  extends AppCompatActivity
 
     private void renderScrollList()
     {
-        this.placesAdapter = new PlaceListAdapter(this, R.layout.place_item, this.places);
-        this.listView.setAdapter(placesAdapter);
+        this.placeRecycleAdapter = new PlaceRecycleAdapter(this, this.places);
+        this.listView = findViewById(R.id.scroll_list_places);
+        this.listView.setAdapter(placeRecycleAdapter);
+        this.listView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override

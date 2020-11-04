@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scroll_list_places"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
