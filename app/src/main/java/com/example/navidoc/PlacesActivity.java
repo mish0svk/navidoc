@@ -37,7 +37,6 @@ public class PlacesActivity  extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setCheckedItem(R.id.nav_places);
-        navigationView.getBackground().setAlpha(200);
         this.listView = findViewById(R.id.scroll_list_places);
 
         if (drawer.isDrawerOpen(GravityCompat.START))

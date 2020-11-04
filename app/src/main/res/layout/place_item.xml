@@ -11,7 +11,7 @@
         android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:background="@drawable/stroke">
+        android:background="@drawable/shapeforplaces">
         <TextView
             android:id="@+id/title_item"
             android:layout_width="wrap_content"
@@ -45,10 +45,11 @@
         android:layout_height="fill_parent"
         android:layout_weight="1">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/navigate_item"
             android:text="@string/navigate_item"
             style="@style/Theme.NaviDoc.Button"
+            android:backgroundTint="@color/primary_orange_button_LM"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.487"

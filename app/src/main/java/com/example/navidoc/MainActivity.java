@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setCheckedItem(R.id.nav_home);
-        navigationView.getBackground().setAlpha(200);
+
 
         this.findAndCloseNavigation();
 

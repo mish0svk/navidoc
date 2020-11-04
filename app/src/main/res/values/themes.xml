@@ -13,9 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="drawerArrowStyle">@style/Theme.NaviDoc.DrawerToggle</item>
-<!--        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>-->
+        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorButtonNormal">@color/primary_orange_button_LM</item>
 
     </style>
 
@@ -40,9 +41,10 @@
 <!--        <item name="android:textColorHint">@color/primary_light_blue</item>-->
     </style>
     <style name="Theme.NaviDoc.Button" parent="Widget.AppCompat.Button.Colored">
-<!--        <item name="colorButtonNormal">@color/primary_light_blue</item>-->
+
 <!--        <item name="android:colorButtonNormal">@color/primary_light_blue</item>-->
 <!--        <item name="android:textColor">@color/secondary</item>-->
+        <item name="android:backgroundTint">@color/primary_orange_button_LM</item>
         <item name="android:layout_width">96dp</item>
         <item name="android:layout_height">36dp</item>
         <item name="android:textSize">12sp</item>
