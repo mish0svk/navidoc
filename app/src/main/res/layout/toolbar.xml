@@ -12,7 +12,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/Theme.NaviDoc.PopupOverlay"
-        app:titleTextColor="@color/secondary" />
+        app:titleTextColor="@color/primary_blue_LM" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,46 +3,46 @@
     <style name="Theme.NaviDoc" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+<!--        <item name="colorPrimary">@color/primary</item>-->
+<!--        <item name="colorPrimaryVariant">@color/purple_700</item>-->
+<!--        <item name="colorOnPrimary">@color/black</item>-->
 
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:actionMenuTextColor">@color/secondary</item>
+<!--        &lt;!&ndash; Secondary brand color. &ndash;&gt;-->
+<!--        <item name="colorSecondary">@color/teal_200</item>-->
+<!--        <item name="colorSecondaryVariant">@color/teal_200</item>-->
+<!--        <item name="colorOnSecondary">@color/black</item>-->
+<!--        <item name="android:actionMenuTextColor">@color/secondary</item>-->
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="drawerArrowStyle">@style/Theme.NaviDoc.DrawerToggle</item>
 
-        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>
+<!--        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>-->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.NaviDoc.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" >
-        <item name="colorPrimary">@color/secondary</item>
+<!--        <item name="colorPrimary">@color/secondary</item>-->
     </style>
 
     <style name="Theme.NaviDoc.DrawerToggle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@color/secondary</item>
-        <item name="android:colorBackground">@color/primary</item>
+<!--        <item name="color">@color/secondary</item>-->
+<!--        <item name="android:colorBackground">@color/primary</item>-->
     </style>
 
     <style name="Theme.NaviDoc.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/secondary</item>
-        <item name="android:textColorHint">@color/primary_light_blue</item>
+<!--        <item name="android:textColor">@color/secondary</item>-->
+<!--        <item name="android:textColorHint">@color/primary_light_blue</item>-->
     </style>
 <!--        <item name="android:textColor">@color/secondary</item>-->
 
-    <style name="Theme.NaviDoc.Button" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/primary_light_blue</item>
-        <item name="android:colorButtonNormal">@color/primary_light_blue</item>
-        <item name="android:textColor">@color/primary_white</item>
-    </style>
+<!--    <style name="Theme.NaviDoc.Button" parent="Widget.AppCompat.Button.Colored">-->
+<!--        <item name="colorButtonNormal">@color/primary_light_blue</item>-->
+<!--        <item name="android:colorButtonNormal">@color/primary_light_blue</item>-->
+<!--        <item name="android:textColor">@color/primary_white</item>-->
+<!--    </style>-->
 
 </resources>

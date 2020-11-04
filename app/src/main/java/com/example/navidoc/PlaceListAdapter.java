@@ -45,7 +45,7 @@ public class PlaceListAdapter extends ArrayAdapter<Place>
         titleView.setText(this.places.get(position).getAmbulance());
         subtitleView.setText(subtitle);
 
-        convertView.setBackgroundColor(getColor(context.getResources(), R.color.black, context.getTheme()));
+        //convertView.setBackgroundColor(getColor(context.getResources(), R.color.black, context.getTheme()));
 
         return convertView;
     }
