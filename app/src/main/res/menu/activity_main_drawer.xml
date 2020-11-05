@@ -14,25 +14,27 @@
                     android:id="@+id/nav_home"
                     android:icon="@drawable/ic_home"
                     android:title="@string/menu_home"
-                    app:itemTextColor="@color/secondary"
-                    app:itemIconTint="@color/secondary"/>
+                    app:itemTextColor="@color/secondary_black_LM"
+
+                    />
+<!--                    app:itemIconTint="@color/secondary"/>-->
 
                 <item
                     android:id="@+id/nav_current_location"
                     android:icon="@drawable/ic_current_place"
                     android:title="@string/menu_current_location"
-                    app:itemTextColor="@color/secondary"
-                    app:itemIconTint="@color/secondary"/>
+                    app:itemTextColor="@color/secondary_black_LM"/>
+<!--                    app:itemIconTint="@color/secondary"/>-->
 
                 <item
                     android:id="@+id/nav_places"
                     android:icon="@drawable/ic_map"
                     android:title="@string/menu_places"
-                    app:itemTextColor="@color/secondary"
-                    app:itemIconTint="@color/secondary"/>
+                    app:itemTextColor="@color/secondary_black_LM"/>
+<!--                    app:itemIconTint="@color/secondary"/>-->
 
 
-                    app:itemIconTint="@color/secondary"/>
+
 
             </group>
         </menu>
@@ -40,6 +42,7 @@
 
     <item
         android:title="@string/nav_user_section"
+        app:itemTextColor="@color/secondary_black_LM"
         android:id="@+id/nav_user_section">
         <menu>
             <group android:checkableBehavior="single" >
@@ -48,8 +51,8 @@
                     android:id="@+id/nav_settings"
                     android:icon="@drawable/ic_settings"
                     android:title="@string/nav_settings"
-                    app:itemTextColor="@color/secondary"
-                    app:itemIconTint="@color/secondary"/>
+                    app:itemTextColor="@color/secondary_black_LM"/>
+<!--                    app:itemIconTint="@color/secondary"/>-->
             </group>
         </menu>
     </item>

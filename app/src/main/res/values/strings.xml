@@ -17,4 +17,8 @@
     <string name="menu_places">Places</string>
     <string name="searching_field">Search for concrete department</string>
     <string name="toastik">searching</string>
+    <string name="title_item">Ambulance</string>
+    <string name="subtitle_item">Name, Department</string>
+    <string name="navigate_item">Navigate</string>
+    <string name="places_activity">Places</string>
 </resources>
