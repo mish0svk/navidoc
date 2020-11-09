@@ -12,7 +12,7 @@
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:background="@drawable/ic_magnifying_glass"
-        android:backgroundTint="@color/secondary_black_LM"
+        android:backgroundTint="@color/primary_orange_button_LM"
         app:layout_anchorGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
