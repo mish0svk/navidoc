@@ -1,5 +1,6 @@
 package com.example.navidoc;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +25,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
-
     private ImageButton searchButton;
     private ConstraintLayout searchLayout;
     private EditText searchField;
+    private NavigationView navigationView;
+    private ImageButton submitSearch;
     private DatabaseHelper db2;
 
     @Override
@@ -37,25 +39,38 @@ public class MainActivity extends AppCompatActivity
         this.searchButton = findViewById(R.id.search_button_main);
         this.searchLayout = findViewById(R.id.search_layout);
         this.searchField = findViewById(R.id.search_field);
+        submitSearch = findViewById(R.id.submit_search);
 
         ImportDataTOdatabase();
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setCheckedItem(R.id.nav_home);
-
-
         this.findAndCloseNavigation();
+        setMainSearchButtonListener();
+        setNavigationListener();
+        setSubmitSearchButtonListener();
+    }
 
+    private void setSubmitSearchButtonListener()
+    {
+        submitSearch.setOnClickListener(view -> {
+            String searchInput = searchField.getText().toString();
+            Intent intent = new Intent(this, PlacesActivity.class);
+            intent.putExtra("searchInput", searchInput);
+            startActivity(intent);
+        });
+    }
+
+    private void setMainSearchButtonListener() {
         this.searchButton.setOnClickListener(view -> {
             if (this.searchLayout.getVisibility() == View.VISIBLE && !searchField.getText().toString().isEmpty())
             {
-               Snackbar.make(view, R.string.toastik, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, R.string.toastik, Snackbar.LENGTH_SHORT).show();
             }
             else if (this.searchLayout.getVisibility() == View.INVISIBLE)
             {
@@ -66,7 +81,12 @@ public class MainActivity extends AppCompatActivity
                 this.searchLayout.setVisibility(View.INVISIBLE);
             }
         });
+    }
 
+
+    @SuppressLint("NonConstantResourceId")
+    private void setNavigationListener()
+    {
         navigationView.setNavigationItemSelectedListener(item -> {
             String TAG = "TAG";
             Log.d(TAG, String.valueOf(item.getItemId()));
@@ -89,7 +109,6 @@ public class MainActivity extends AppCompatActivity
 
             return false;
         });
-
     }
 
 
