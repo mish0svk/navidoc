@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.NaviDoc" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primary_black_DM</item>
+        <item name="colorPrimary">@color/secondary_black_LM</item>
+
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

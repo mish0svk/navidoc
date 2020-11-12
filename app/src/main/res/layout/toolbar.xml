@@ -8,10 +8,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary_blue_LM"
+        android:background="@color/primary_white_LM"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/primary_white_LM" />
+        app:titleTextColor="@color/secondary_black_LM"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
