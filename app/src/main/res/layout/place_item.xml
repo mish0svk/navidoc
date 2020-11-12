@@ -2,7 +2,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -20,7 +19,7 @@
             android:background="@drawable/shapeforplaces">
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/appCompatImageButton"
+                android:id="@+id/item_info"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:background="@drawable/ic_info"
@@ -30,19 +29,6 @@
                 app:layout_constraintHorizontal_bias="0.059"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="52dp"
-                android:background="@drawable/ic_star"
-                android:backgroundTint="@color/primary_orange_button_LM"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/title_item"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.421" />
 
             <TextView
                 android:id="@+id/title_item"
@@ -56,7 +42,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.27"
-                app:layout_constraintStart_toEndOf="@+id/appCompatImageButton"
+                app:layout_constraintStart_toEndOf="@+id/item_info"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.433" />
 
@@ -71,12 +57,27 @@
                 android:textStyle="bold|italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.282"
-                app:layout_constraintStart_toEndOf="@+id/appCompatImageButton"
+                app:layout_constraintStart_toEndOf="@+id/item_info"
                 app:layout_constraintTop_toBottomOf="@+id/title_item" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/item_favourite"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_star"
+                android:backgroundTint="@color/primary_orange_button_LM"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toEndOf="@+id/title_item"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.578" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_navigate_layout"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1">

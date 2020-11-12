@@ -21,4 +21,8 @@
     <string name="subtitle_item">Name, Department</string>
     <string name="navigate_item">Navigate</string>
     <string name="places_activity">Places</string>
+    <string name="detail_activity">Detail</string>
+    <string name="ambulance">Ambulance</string>
+    <string name="department">Department</string>
+    <string name="doctors_name">Doctor\'s name</string>
 </resources>

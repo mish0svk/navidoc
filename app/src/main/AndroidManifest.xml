@@ -26,6 +26,11 @@
             android:label="@string/places_activity">
         </activity>
 
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/detail_activity">
+        </activity>
+
     </application>
 
 </manifest>
