@@ -27,6 +27,7 @@
 
     <style name="Theme.NaviDoc.DrawerToggle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
+        <item name="color">@color/primary_grey_DM</item>
     </style>
 
     <style name="Theme.NaviDoc.EditText" parent="Widget.AppCompat.EditText">
