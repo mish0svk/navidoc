@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/title_item"
+                android:text="@string/ambulance"
                 android:textColor="@color/primary_blue_LM"
                 android:textSize="22sp"
                 android:textStyle="bold|italic"

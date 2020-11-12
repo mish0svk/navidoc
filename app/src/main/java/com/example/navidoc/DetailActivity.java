@@ -15,12 +15,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Objects;
+
 public class DetailActivity extends AppCompatActivity
 {
     private NavigationView navigationView;
-    private AppCompatTextView ambulance;
-    private AppCompatTextView department;
-    private AppCompatTextView doctorsName;
+    private AppCompatTextView ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -37,6 +37,10 @@ public class DetailActivity extends AppCompatActivity
         toggle.syncState();
         ambulance = findViewById(R.id.ambulance);
         department = findViewById(R.id.department);
+        floor = findViewById(R.id.floor);
+        officeHours = findViewById(R.id.office_hours);
+        phoneNumber = findViewById(R.id.phone_number);
+        websiteUrl = findViewById(R.id.website_url);
         doctorsName = findViewById(R.id.doctors_name);
 
         if (drawer.isDrawerOpen(GravityCompat.START))
@@ -47,15 +51,32 @@ public class DetailActivity extends AppCompatActivity
 
         if (getIntent().hasExtra("selected_place") && getIntent().getParcelableExtra("selected_place") != null)
         {
-            setDetails((Place) getIntent().getParcelableExtra("selected_place"));
+            setDetails((Place) Objects.requireNonNull(getIntent().getParcelableExtra("selected_place")));
         }
     }
 
     private void setDetails(Place place)
     {
-        ambulance.setText(place.getAmbulance());
-        department.setText(place.getDepartment());
-        doctorsName.setText(place.getDoctorsName());
+        //setting string to office hours
+        String from = getResources().getString(R.string.from);
+        String to = getResources().getString(R.string.to);
+        String officeHoursText = from + " " + place.getStartTime() + " " + to + " " + place.getEndTime();
+
+        //setting text to view
+        setDetail(ambulance, R.string.ambulance, place.getAmbulance());
+        setDetail(department, R.string.department, place.getDepartment());
+        setDetail(floor, R.string.floor, String.valueOf(place.getFloor()));
+        setDetail(doctorsName, R.string.doctors_name, place.getDoctorsName());
+        setDetail(officeHours, R.string.office_hours, officeHoursText);
+        setDetail(phoneNumber, R.string.phone_number, place.getPhoneNumber());
+        setDetail(websiteUrl, R.string.website_url, place.getWebsiteUrl());
+    }
+
+    private void setDetail(AppCompatTextView textView, int id, String value)
+    {
+        String text = getResources().getString(id);
+        text = text.concat(": ").concat(value);
+        textView.setText(text);
     }
 
 

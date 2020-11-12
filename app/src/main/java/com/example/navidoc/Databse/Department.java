@@ -1,47 +1,40 @@
 package com.example.navidoc.Databse;
 
-public class Department {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
+public class Department
+{
+    @PrimaryKey (autoGenerate = true)
     int ID;
     String name;
     int floor;
 
-    public Department(int ID, String name, int floor) {
+    public Department(String name, int floor)
+    {
+        this.name = name;
+        this.floor = floor;
+    }
+
+    public void setID(int ID)
+    {
         this.ID = ID;
-        this.name = name;
-        this.floor = floor;
     }
 
-    public Department(String name, int floor) {
-        this.name = name;
-        this.floor = floor;
-    }
-
-    public Department() {
-    }
-
-    public int getID() {
+    public int getID()
+    {
         return ID;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getFloor() {
+    public int getFloor()
+    {
         return floor;
-    }
-
-    public void setFloor(int floor) {
-        this.floor = floor;
     }
 
     @Override

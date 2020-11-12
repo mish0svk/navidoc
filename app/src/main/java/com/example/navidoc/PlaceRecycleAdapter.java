@@ -40,7 +40,13 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
         Place place = this.places.get(position);
-        holder.titleView.setText(place.getAmbulance());
+        String title = place.getAmbulance();
+        if (title.length() > 13)
+        {
+            holder.titleView.setTextSize(14);
+        }
+
+        holder.titleView.setText(title);
         holder.subtitleView.setText(String.format("%s, %s", place.getDoctorsName(), place.getDepartment()));
     }
 

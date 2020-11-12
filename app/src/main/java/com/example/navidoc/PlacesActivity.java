@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,10 +17,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.navidoc.Databse.DAO;
+import com.example.navidoc.Databse.DatabaseHelper;
+import com.example.navidoc.Databse.Department;
+import com.example.navidoc.Databse.Doctor;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlacesActivity  extends AppCompatActivity implements OnPlaceListener
 {
@@ -29,6 +35,9 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
     private PlaceRecycleAdapter placeRecycleAdapter;
     private NavigationView navigationView;
     private EditText searchField;
+    private DatabaseHelper db;
+    private DAO dao;
+    private ImageButton submitSearch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -46,6 +55,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         navigationView.setCheckedItem(R.id.nav_places);
         this.listView = findViewById(R.id.scroll_list_places);
         searchField = findViewById(R.id.search_field);
+        submitSearch = findViewById(R.id.submit_search);
 
         if (getIntent().hasExtra("searchInput") && !getIntent().getStringExtra("searchInput").isEmpty())
         {
@@ -57,31 +67,55 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
             drawer.closeDrawer(GravityCompat.START);
         }
 
+        setSubmitSearchListener();
         setNavigationListener();
-        setLists();
+
+        db = DatabaseHelper.getInstance(this);
+        dao = db.dao();
+
         renderScrollList();
+
+        if (!searchField.getText().toString().isEmpty())
+        {
+            readDataFromDb(searchField.getText().toString());
+        }
     }
 
-
-    private void setLists()
+    private void setSubmitSearchListener()
     {
-        this.places.add(new Place("Ambulance", "Janko Hrasko", "department1"));
-        this.places.add(new Place("Ambulance", "Rocco Rocco", "department2"));
-        this.places.add(new Place("Ambulance", "Julia Julia", "department3"));
-        this.places.add(new Place("Ambulance", "Philip Philip", "department4"));
-        this.places.add(new Place("Ambulance", "Janko Hrasko", "department1"));
-        this.places.add(new Place("Ambulance", "Rocco Rocco", "department2"));
-        this.places.add(new Place("Ambulance", "Julia Julia", "department3"));
-        this.places.add(new Place("Ambulance", "Philip Philip", "department4"));
-        this.places.add(new Place("Ambulance", "Janko Hrasko", "department1"));
-        this.places.add(new Place("Ambulance", "Rocco Rocco", "department2"));
-        this.places.add(new Place("Ambulance", "Julia Julia", "department3"));
-        this.places.add(new Place("Ambulance", "Philip Philip", "department4"));
-        this.places.add(new Place("Ambulance", "Janko Hrasko", "department1"));
-        this.places.add(new Place("Ambulance", "Rocco Rocco", "department2"));
-        this.places.add(new Place("Ambulance", "Julia Julia", "department3"));
-        this.places.add(new Place("Ambulance", "Philip Philip", "department4"));
+        submitSearch.setOnClickListener(view -> {
+            readDataFromDb(searchField.getText().toString());
+        });
     }
+
+    private void readDataFromDb(String query)
+    {
+        List<Doctor> doctors = new ArrayList<>();
+
+        if (!query.isEmpty())
+        {
+            doctors.addAll(dao.getDoctorsByAmbulanceName(query));
+            doctors.addAll(dao.getDoctorsByName(query));
+            doctors.addAll(dao.getDoctorsFromDepartmentByDepartmentName(query));
+            doctors = doctors.stream().distinct().collect(Collectors.toList());
+        }
+        else
+        {
+            doctors = dao.getAllDoctors();
+        }
+
+        places.clear();
+        doctors.forEach(doctor -> {
+            Department department = dao.getDepartmentByID(doctor.getDepartment_id());
+
+            places.add(new Place(doctor.getAmbulance_name(), department.getName(),
+                    department.getFloor(), doctor.getName(), doctor.getStart_time(),
+                    doctor.getEnd_time(), doctor.getPhone_number(), doctor.getWeb_site()));
+        });
+
+        placeRecycleAdapter.notifyDataSetChanged();
+    }
+
 
     private void renderScrollList()
     {

@@ -17,7 +17,6 @@
     <string name="menu_places">Places</string>
     <string name="searching_field">Search for concrete department</string>
     <string name="toastik">searching</string>
-    <string name="title_item">Ambulance</string>
     <string name="subtitle_item">Name, Department</string>
     <string name="navigate_item">Navigate</string>
     <string name="places_activity">Places</string>
@@ -25,4 +24,11 @@
     <string name="ambulance">Ambulance</string>
     <string name="department">Department</string>
     <string name="doctors_name">Doctor\'s name</string>
+    <string name="floor">Floor</string>
+    <string name="office_hours">Office hours</string>
+    <string name="phone_number">Phone number</string>
+    <string name="website_url">Website URL</string>
+    <string name="works">Works</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
 </resources>
