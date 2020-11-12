@@ -45,5 +45,5 @@ dependencies {
 apply plugin: 'com.google.ar.sceneform.plugin'
 sceneform.asset('sampledata/model.obj', // The “Source Asset Path” you specified during import
         'default', // The “Material Path” you specified during import
-        '../../../app/sampledata/model.sfa', // The “.sfa Output Path” you specified during import
+        'sampledata/model.sfa', // The “.sfa Output Path” you specified during import
         'src/main/assets/model') // The “.sfb Output Path” you specified during import
