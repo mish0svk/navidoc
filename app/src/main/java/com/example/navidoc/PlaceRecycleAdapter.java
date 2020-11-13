@@ -48,6 +48,15 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
 
         holder.titleView.setText(title);
         holder.subtitleView.setText(String.format("%s, %s", place.getDoctorsName(), place.getDepartment()));
+
+        if (place.isFavourite() == 1)
+        {
+            holder.favouriteButton.setBackgroundResource(R.drawable.ic_full_star);
+        }
+        else
+        {
+            holder.favouriteButton.setBackgroundResource(R.drawable.ic_star);
+        }
     }
 
     @Override
