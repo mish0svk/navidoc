@@ -40,7 +40,6 @@ public class Doctor
         Doctor_ID = doctor_ID;
     }
 
-
     public int getDoctor_ID()
     {
         return Doctor_ID;
@@ -90,6 +89,8 @@ public class Doctor
     {
         return end_time;
     }
+
+    public void setIsFavorite(int isFavorite) { this.isFavorite = isFavorite; }
 
     public int getIsFavorite()
     {

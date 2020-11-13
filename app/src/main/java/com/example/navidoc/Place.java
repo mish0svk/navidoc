@@ -13,9 +13,10 @@ public class Place implements Parcelable
     private final String endTime;
     private final String phoneNumber;
     private final String websiteUrl;
+    private int favourite;
 
     public Place(String ambulance, String department, int floor, String doctorsName, String startTime,
-                 String endTime, String phoneNumber, String websiteUrl)
+                 String endTime, String phoneNumber, String websiteUrl, int favourite)
     {
         this.ambulance = ambulance;
         this.department = department;
@@ -25,7 +26,9 @@ public class Place implements Parcelable
         this.endTime = endTime;
         this.phoneNumber = phoneNumber;
         this.websiteUrl = websiteUrl;
+        this.favourite = favourite;
     }
+
 
     protected Place(Parcel in)
     {
@@ -37,6 +40,7 @@ public class Place implements Parcelable
         endTime = in.readString();
         phoneNumber = in.readString();
         websiteUrl = in.readString();
+        favourite = in.readInt();
     }
 
     public static final Creator<Place> CREATOR = new Creator<Place>()
@@ -94,6 +98,13 @@ public class Place implements Parcelable
         return websiteUrl;
     }
 
+    public int isFavourite() { return favourite; }
+
+    public void setFavourite(int favourite)
+    {
+        this.favourite = favourite;
+    }
+
     @Override
     public int describeContents()
     {
@@ -111,5 +122,6 @@ public class Place implements Parcelable
         dest.writeString(endTime);
         dest.writeString(phoneNumber);
         dest.writeString(websiteUrl);
+        dest.writeInt(favourite);
     }
 }

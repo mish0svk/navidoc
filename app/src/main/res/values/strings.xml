@@ -31,4 +31,8 @@
     <string name="works">Works</string>
     <string name="from">from</string>
     <string name="to">to</string>
+    <string name="no_results">No results were found</string>
+    <string name="toast">Toast</string>
+    <string name="add_to_fav">Added to favourite</string>
+    <string name="rem_from_fav">Removed from favourite</string>
 </resources>

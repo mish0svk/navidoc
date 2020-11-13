@@ -198,8 +198,8 @@ public class MainActivity extends AppCompatActivity
         dao.insertDoctor(new Doctor("Anton Href","RongenMaster+","0908 987 789","RongenMaster+@gmail.com",8,"www.RongenMaster+.com","08:00","14:00",0, dao.getDepartmentIdByName("RTG")));
 
         //Geriatria
-        dao.insertDoctor(new Doctor("Kristian Onderko","Geriatricka Ambulancia","0908 312 789","GeriatrickaAmbulancia+@gmail.com",21,"www.GeriatrickaAmbulancia++.com","08:00","14:00",6, dao.getDepartmentIdByName("Geriatria")));
-        dao.insertDoctor(new Doctor("Klaudia Chroma","Geriatricka Ambulancia+","0908 312 789","GeriatrickaAmbulancia+@gmail.com",23,"www.Geriatricka mbulancia++.com","09:00","16:00",6, dao.getDepartmentIdByName("Geriatria")));
+        dao.insertDoctor(new Doctor("Kristian Onderko","Geriatricka Ambulancia","0908 312 789","GeriatrickaAmbulancia+@gmail.com",21,"www.GeriatrickaAmbulancia++.com","08:00","14:00",0, dao.getDepartmentIdByName("Geriatria")));
+        dao.insertDoctor(new Doctor("Klaudia Chroma","Geriatricka Ambulancia+","0908 312 789","GeriatrickaAmbulancia+@gmail.com",23,"www.Geriatricka mbulancia++.com","09:00","16:00",0, dao.getDepartmentIdByName("Geriatria")));
 
         //Onkologia
         dao.insertDoctor(new Doctor("Vladimir Kralovic","Onkologia","0947 372 789","Onkologia+@gmail.com",42,"www.Onkologia+.com","08:00","13:00",0, dao.getDepartmentIdByName("Onkologia")));

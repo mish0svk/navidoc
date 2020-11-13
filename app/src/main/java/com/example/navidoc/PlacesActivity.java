@@ -25,6 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PlacesActivity  extends AppCompatActivity implements OnPlaceListener
@@ -108,12 +109,17 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         doctors.forEach(doctor -> {
             Department department = dao.getDepartmentByID(doctor.getDepartment_id());
 
-            places.add(new Place(doctor.getAmbulance_name(), department.getName(),
-                    department.getFloor(), doctor.getName(), doctor.getStart_time(),
-                    doctor.getEnd_time(), doctor.getPhone_number(), doctor.getWeb_site()));
+            places.add(new Place(doctor.getAmbulance_name(), department.getName(), department.getFloor(),
+                    doctor.getName(), doctor.getStart_time(), doctor.getEnd_time(),
+                    doctor.getPhone_number(), doctor.getWeb_site(), doctor.getIsFavorite()));
         });
 
         placeRecycleAdapter.notifyDataSetChanged();
+
+        if (doctors.size() == 0)
+        {
+            MessageToast.makeToast(this, R.string.no_results, Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -146,15 +152,39 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
     }
 
     @Override
-    public void onNavigateClick(int position) {
+    public void onNavigateClick(int position)
+    {
         Log.d(TAG, "onNavigateClick: " + position);
-        Toast.makeText(this, "NAVIGATE", Toast.LENGTH_SHORT).show();
+        MessageToast.makeToast(this, "navigate", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onFavouriteClick(int position) {
         Log.d(TAG, "onNavigateClick: " + position);
-        Toast.makeText(this, "ADD TO FAVOURITE", Toast.LENGTH_SHORT).show();
+        Place touchedPlace = places.get(position);
+        int favourite;
+
+        if (touchedPlace.isFavourite() == 0)
+        {
+            MessageToast.makeToast(this, R.string.add_to_fav, Toast.LENGTH_SHORT).show();
+            favourite = 1;
+        }
+        else
+        {
+            MessageToast.makeToast(this, R.string.rem_from_fav, Toast.LENGTH_SHORT).show();
+            favourite = 0;
+        }
+
+        List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
+        if (Objects.requireNonNull(tmp).size() > 0)
+        {
+            Doctor doctor = tmp.get(0);
+            doctor.setIsFavorite(favourite);
+            dao.updatedDoctor(doctor);
+        }
+
+        touchedPlace.setFavourite(favourite);
+        placeRecycleAdapter.notifyItemChanged(position);
     }
 
     @SuppressLint("NonConstantResourceId")
