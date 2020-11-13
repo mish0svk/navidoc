@@ -6,7 +6,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {Department.class, Doctor.class}, version = 1, exportSchema = false)
-public abstract class DatabaseHelper extends RoomDatabase {
+public abstract class DatabaseHelper extends RoomDatabase
+{
     private static DatabaseHelper instance;
 
     public abstract DAO dao();

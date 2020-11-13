@@ -36,4 +36,5 @@
     <string name="add_to_fav">Added to favourite</string>
     <string name="rem_from_fav">Removed from favourite</string>
     <string name="tap_to_navigate">Tap to navigate</string>
+    <string name="my_places">My places</string>
 </resources>

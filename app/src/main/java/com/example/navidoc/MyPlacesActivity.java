@@ -4,11 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,25 +23,21 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class PlacesActivity  extends AppCompatActivity implements OnPlaceListener
+public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListener
 {
-    private List<Place> places = new ArrayList<>();
-    private RecyclerView listView;
-    private static final String TAG = "PlacesActivity";
-    private PlaceRecycleAdapter placeRecycleAdapter;
     private NavigationView navigationView;
-    private AutoCompleteTextView searchField;
+    private RecyclerView listView;
+    private PlaceRecycleAdapter placeRecycleAdapter;
+    private List<Place> places = new ArrayList<>();
     private DatabaseHelper db;
     private DAO dao;
-    private ImageButton submitSearch;
+    private static final String TAG = "MyPlacesActivity";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_places);
+        setContentView(R.layout.activity_my_places);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,71 +46,21 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setCheckedItem(R.id.nav_places);
+        navigationView.setCheckedItem(R.id.nav_my_places);
+        this.findAndCloseNavigation();
         this.listView = findViewById(R.id.scroll_list_places);
-        searchField = findViewById(R.id.search_field);
-        submitSearch = findViewById(R.id.submit_search);
-
-        if (getIntent().hasExtra("searchInput") && !getIntent().getStringExtra("searchInput").isEmpty())
-        {
-            searchField.setText(getIntent().getStringExtra("searchInput"));
-        }
-
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-
-        setSubmitSearchListener();
-        setNavigationListener();
-
         db = DatabaseHelper.getInstance(this);
         dao = db.dao();
-
-        searchRelevantData();
         renderScrollList();
-
-        if (!searchField.getText().toString().isEmpty())
-        {
-            readDataFromDb(searchField.getText().toString());
-        }
+        readDataFromDb();
+        setNavigationListener();
     }
 
-    private void setSubmitSearchListener()
+    private void readDataFromDb()
     {
-        submitSearch.setOnClickListener(view -> {
-            readDataFromDb(searchField.getText().toString());
-        });
-    }
-
-    private void searchRelevantData()
-    {
-        List<Place> places = new ArrayList<>();
-        PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
-        searchField.setThreshold(1);
-        searchField.setAdapter(placeSearchAdapter);
-        searchField.setOnItemClickListener((parent, view, position, id) -> {
-            readDataFromDb(searchField.getText().toString());
-        });
-    }
-
-    private void readDataFromDb(String query)
-    {
-        List<Doctor> doctors = new ArrayList<>();
-
-        if (!query.isEmpty())
-        {
-            doctors.addAll(dao.getDoctorsByAmbulanceName(query));
-            doctors.addAll(dao.getDoctorsByName(query));
-            doctors.addAll(dao.getDoctorsFromDepartmentByDepartmentName(query));
-            doctors = doctors.stream().distinct().collect(Collectors.toList());
-        }
-        else
-        {
-            doctors = dao.getAllDoctors();
-        }
-
+        List<Doctor> doctors = new ArrayList<>(dao.getDoctorsByFavourite(1));
         places.clear();
+
         doctors.forEach(doctor -> {
             Department department = dao.getDepartmentByID(doctor.getDepartment_id());
 
@@ -134,7 +77,6 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         }
     }
 
-
     private void renderScrollList()
     {
         this.placeRecycleAdapter = new PlaceRecycleAdapter(this.places, this);
@@ -143,15 +85,55 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         this.listView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    @Override
-    public void onBackPressed()
+    @SuppressLint("NonConstantResourceId")
+    private void setNavigationListener()
+    {
+        navigationView.setNavigationItemSelectedListener(item -> {
+            String TAG = "TAG";
+            Log.d(TAG, String.valueOf(item.getItemId()));
+            Intent intent = null;
+            switch (item.getItemId())
+            {
+                case R.id.nav_home:
+                    Log.d(TAG, "home");
+                    intent = new Intent(this, MainActivity.class);
+                    break;
+                case R.id.nav_places:
+                    Log.d(TAG, "places");
+                    intent = new Intent(this, PlacesActivity.class);
+                    break;
+                case R.id.nav_current_location:
+                    Log.d(TAG, "current location");
+                    break;
+                case R.id.nav_my_places:
+                    Log.d(TAG, "already here");
+
+                    break;
+                default:
+                    Log.d(TAG, "others");
+            }
+
+            if (intent != null)
+            {
+                startActivity(intent);
+            }
+
+            return false;
+        });
+    }
+
+    private boolean findAndCloseNavigation()
     {
         DrawerLayout layout = findViewById(R.id.drawer_layout);
-        if (layout.isDrawerOpen(GravityCompat.START)) {
+
+        if (layout.isDrawerOpen(GravityCompat.START))
+        {
             layout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -197,42 +179,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         }
 
         touchedPlace.setFavourite(favourite);
-        placeRecycleAdapter.notifyItemChanged(position);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    private void setNavigationListener()
-    {
-        navigationView.setNavigationItemSelectedListener(item -> {
-            String TAG = "TAG";
-            Log.d(TAG, String.valueOf(item.getItemId()));
-            Intent intent = null;
-            switch (item.getItemId())
-            {
-                case R.id.nav_home:
-                    Log.d(TAG, "HOME");
-                    intent = new Intent(this, MainActivity.class);
-                    break;
-                case R.id.nav_places:
-                    Log.d(TAG, "already here");
-                    break;
-                case R.id.nav_current_location:
-                    Log.d(TAG, "current location");
-                    break;
-                case R.id.nav_my_places:
-                    Log.d(TAG, "my places");
-                    intent = new Intent(this, MyPlacesActivity.class);
-                    break;
-                default:
-                    Log.d(TAG, "others");
-            }
-
-            if (intent != null)
-            {
-                startActivity(intent);
-            }
-
-            return false;
-        });
+        places.remove(position);
+        placeRecycleAdapter.notifyItemRemoved(position);
     }
 }

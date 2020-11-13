@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.navidoc">
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,9 @@
             android:name=".DetailActivity"
             android:label="@string/detail_activity">
         </activity>
+
+        <activity android:name=".MyPlacesActivity"
+            android:label="@string/my_places"/>
 
     </application>
 

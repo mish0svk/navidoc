@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(item -> {
             String TAG = "TAG";
             Log.d(TAG, String.valueOf(item.getItemId()));
+            Intent intent = null;
             switch (item.getItemId())
             {
                 case R.id.nav_home:
@@ -118,14 +119,22 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.nav_places:
                     Log.d(TAG, "places");
-                    Intent intent = new Intent(this, PlacesActivity.class);
-                    startActivity(intent);
+                    intent = new Intent(this, PlacesActivity.class);
                     break;
                 case R.id.nav_current_location:
                     Log.d(TAG, "current location");
                     break;
+                case R.id.nav_my_places:
+                    Log.d(TAG, "my places");
+                    intent = new Intent(this, MyPlacesActivity.class);
+                    break;
                 default:
                     Log.d(TAG, "others");
+            }
+
+            if (intent != null)
+            {
+                startActivity(intent);
             }
 
             return false;
@@ -234,8 +243,6 @@ public class MainActivity extends AppCompatActivity
         dao.insertDoctor(new Doctor("Robert Kocner","Gynekologicka Ambulancia","0908 312 789","Kocner@gmail.com",32,"www.Kocner.com","05:00","12:00",0, dao.getDepartmentIdByName("Gynekologia")));
         dao.insertDoctor(new Doctor("Iveta Rovna","Gynekologicka Ambulancia","0908 312 789","Rovna@gmail.com",33,"www.Rovna.com","06:00","13:00",0, dao.getDepartmentIdByName("Gynekologia")));
         dao.insertDoctor(new Doctor("Julius Bentner","Gynekologicka Ambulancia","0908 312 789","Bentner@gmail.com",34,"www.Bentner.com","07:00","14:00",0, dao.getDepartmentIdByName("Gynekologia")));
-
-
 
     }
 }

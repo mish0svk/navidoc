@@ -1,7 +1,10 @@
 package com.example.navidoc;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -21,6 +25,7 @@ public class DetailActivity extends AppCompatActivity
 {
     private NavigationView navigationView;
     private AppCompatTextView ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
+    private static final String TAG = "DetailActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -53,6 +58,43 @@ public class DetailActivity extends AppCompatActivity
         {
             setDetails((Place) Objects.requireNonNull(getIntent().getParcelableExtra("selected_place")));
         }
+
+        setWebPageListener();
+        setPhoneCallListener();
+    }
+
+    private void setPhoneCallListener()
+    {
+        phoneNumber.setOnClickListener(view -> {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+            {
+                ActivityCompat.requestPermissions(DetailActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 101);
+            }
+
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:+" + parseData(phoneNumber).trim()));
+            startActivity(callIntent);
+        });
+    }
+
+    private void setWebPageListener()
+    {
+        websiteUrl.setOnClickListener(view -> {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(parseData(websiteUrl)));
+            startActivity(intent);
+        });
+        System.out.println("sad");
+    }
+
+    private String parseData(AppCompatTextView textView)
+    {
+        String data = textView.getText().toString();
+        data = data.substring(data.indexOf(":") + 2);
+        Log.d(TAG, "parsed data: '" + data + "'");
+
+        return data;
     }
 
     private void setDetails(Place place)
@@ -99,6 +141,10 @@ public class DetailActivity extends AppCompatActivity
                     break;
                 case R.id.nav_current_location:
                     Log.d(TAG, "current location");
+                    break;
+                case R.id.nav_my_places:
+                    Log.d(TAG, "my places");
+                    intent = new Intent(this, MyPlacesActivity.class);
                     break;
                 default:
                     Log.d(TAG, "others");
