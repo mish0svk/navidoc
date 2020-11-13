@@ -72,4 +72,7 @@ public interface DAO
     @Query("SELECT doctor.* FROM doctor INNER JOIN department" +
             " ON doctor.department_id = department.ID WHERE department.name LIKE '%' || :name || '%'")
     List<Doctor> getDoctorsFromDepartmentByDepartmentName(String name);
+
+    @Query("SELECT * FROM doctor WHERE isFavorite = :favourite")
+    List<Doctor> getDoctorsByFavourite(int favourite);
 }

@@ -78,7 +78,8 @@
             android:layout_height="wrap_content"
             android:text="@string/phone_number"
             android:paddingTop="15dp"
-            android:paddingBottom="15dp"/>
+            android:paddingBottom="15dp"
+            android:clickable="true"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/website_url"
@@ -86,7 +87,9 @@
             android:layout_height="wrap_content"
             android:text="@string/website_url"
             android:paddingTop="15dp"
-            android:paddingBottom="15dp"/>
+            android:paddingBottom="15dp"
+            android:autoLink="web"
+            android:linksClickable="true"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
