@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
 import com.example.navidoc.Databse.DAO;
@@ -22,11 +22,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
 {
     private ImageButton searchButton;
     private ConstraintLayout searchLayout;
-    private EditText searchField;
+    private AutoCompleteTextView searchField;
     private NavigationView navigationView;
     private ImageButton submitSearch;
     private DatabaseHelper db2;
@@ -55,16 +58,33 @@ public class MainActivity extends AppCompatActivity
         setMainSearchButtonListener();
         setNavigationListener();
         setSubmitSearchButtonListener();
+        searchRelevantData();
+    }
+
+    private void searchRelevantData()
+    {
+        List<Place> places = new ArrayList<>();
+        PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
+        searchField.setThreshold(1);
+        searchField.setAdapter(placeSearchAdapter);
+        searchField.setOnItemClickListener((parent, view, position, id) -> {
+           startPlacesActivityWithQuery();
+        });
     }
 
     private void setSubmitSearchButtonListener()
     {
         submitSearch.setOnClickListener(view -> {
-            String searchInput = searchField.getText().toString();
-            Intent intent = new Intent(this, PlacesActivity.class);
-            intent.putExtra("searchInput", searchInput);
-            startActivity(intent);
+           startPlacesActivityWithQuery();
         });
+    }
+
+    private void startPlacesActivityWithQuery()
+    {
+        String searchInput = searchField.getText().toString();
+        Intent intent = new Intent(this, PlacesActivity.class);
+        intent.putExtra("searchInput", searchInput);
+        startActivity(intent);
     }
 
     private void setMainSearchButtonListener() {

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -35,7 +35,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
     private static final String TAG = "PlacesActivity";
     private PlaceRecycleAdapter placeRecycleAdapter;
     private NavigationView navigationView;
-    private EditText searchField;
+    private AutoCompleteTextView searchField;
     private DatabaseHelper db;
     private DAO dao;
     private ImageButton submitSearch;
@@ -74,6 +74,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         db = DatabaseHelper.getInstance(this);
         dao = db.dao();
 
+        searchRelevantData();
         renderScrollList();
 
         if (!searchField.getText().toString().isEmpty())
@@ -85,6 +86,17 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
     private void setSubmitSearchListener()
     {
         submitSearch.setOnClickListener(view -> {
+            readDataFromDb(searchField.getText().toString());
+        });
+    }
+
+    private void searchRelevantData()
+    {
+        List<Place> places = new ArrayList<>();
+        PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
+        searchField.setThreshold(1);
+        searchField.setAdapter(placeSearchAdapter);
+        searchField.setOnItemClickListener((parent, view, position, id) -> {
             readDataFromDb(searchField.getText().toString());
         });
     }
