@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/doctors_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/doctors_name"
+        android:textStyle="bold|italic"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/department"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/department"
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/ambulance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ambulance"
+        android:textSize="10sp"
+        tools:ignore="SmallSp"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
