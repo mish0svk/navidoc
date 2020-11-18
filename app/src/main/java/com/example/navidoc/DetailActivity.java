@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -24,7 +25,7 @@ import java.util.Objects;
 public class DetailActivity extends AppCompatActivity
 {
     private NavigationView navigationView;
-    private AppCompatTextView ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
+    private AppCompatEditText ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
     private static final String TAG = "DetailActivity";
 
     @Override
@@ -88,7 +89,7 @@ public class DetailActivity extends AppCompatActivity
         System.out.println("sad");
     }
 
-    private String parseData(AppCompatTextView textView)
+    private String parseData(AppCompatEditText textView)
     {
         String data = textView.getText().toString();
         data = data.substring(data.indexOf(":") + 2);
@@ -114,11 +115,11 @@ public class DetailActivity extends AppCompatActivity
         setDetail(websiteUrl, R.string.website_url, place.getWebsiteUrl());
     }
 
-    private void setDetail(AppCompatTextView textView, int id, String value)
+    private void setDetail(AppCompatEditText editText, int id, String value)
     {
         String text = getResources().getString(id);
         text = text.concat(": ").concat(value);
-        textView.setText(text);
+        editText.setText(value);
     }
 
 
