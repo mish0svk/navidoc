@@ -17,7 +17,7 @@
             android:labelFor="@id/ambulance"
             android:text="@string/ambulance"
             android:textColor="@color/primary_blue_LM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department"
                 android:textColor="@color/primary_blue_LM"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/floor"
                 android:textColor="@color/primary_blue_LM"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:text="@string/doctors_name"
             android:textColor="@color/primary_blue_LM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"/>
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:text="@string/office_hours"
             android:textColor="@color/primary_blue_LM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"/>
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:text="@string/phone_number"
             android:textColor="@color/primary_blue_LM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"/>
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:text="@string/website_url"
             android:textColor="@color/primary_blue_LM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"/>
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -138,6 +138,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:textColorLink="@color/primary_blue_LM"
             android:enabled="false"
             android:textColor="@color/secondary_black_LM"
             android:linksClickable="true" />
