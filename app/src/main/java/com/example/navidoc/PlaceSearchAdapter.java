@@ -121,7 +121,11 @@ public class PlaceSearchAdapter extends ArrayAdapter<Place>
         protected void publishResults(CharSequence constraint, FilterResults results)
         {
             this.placeSearchAdapter.places.clear();
-            placeSearchAdapter.places.addAll((List<Place>) results.values);
+            if (results.values == null){
+                placeSearchAdapter.places.addAll(new ArrayList<Place>());
+            }else {
+                placeSearchAdapter.places.addAll((List<Place>) results.values);
+            }
             placeSearchAdapter.notifyDataSetChanged();
         }
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -72,7 +73,7 @@ public class DetailActivity extends AppCompatActivity
             }
 
             Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:+" + parseData(phoneNumber).trim()));
+            callIntent.setData(Uri.parse("tel:+" + phoneNumber.getText().toString().trim()));
             startActivity(callIntent);
         });
     }
@@ -82,19 +83,10 @@ public class DetailActivity extends AppCompatActivity
         websiteUrl.setOnClickListener(view -> {
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(parseData(websiteUrl)));
+            intent.setData(Uri.parse(websiteUrl.getText().toString()));
             startActivity(intent);
         });
         System.out.println("sad");
-    }
-
-    private String parseData(AppCompatTextView textView)
-    {
-        String data = textView.getText().toString();
-        data = data.substring(data.indexOf(":") + 2);
-        Log.d(TAG, "parsed data: '" + data + "'");
-
-        return data;
     }
 
     private void setDetails(Place place)
@@ -114,11 +106,11 @@ public class DetailActivity extends AppCompatActivity
         setDetail(websiteUrl, R.string.website_url, place.getWebsiteUrl());
     }
 
-    private void setDetail(AppCompatTextView textView, int id, String value)
+    private void setDetail(AppCompatTextView editText, int id, String value)
     {
         String text = getResources().getString(id);
         text = text.concat(": ").concat(value);
-        textView.setText(text);
+        editText.setText(value);
     }
 
 
