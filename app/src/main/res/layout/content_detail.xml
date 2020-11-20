@@ -29,11 +29,13 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/ambulance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:background="@drawable/shape_for_editext"
             android:textColor="@color/secondary_black_LM" />
 
         <LinearLayout
@@ -66,19 +68,26 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/department"
-                android:layout_width="250dp"
+                android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:textColor="@color/secondary_black_LM" />
+                android:background="@drawable/shape_for_editext"
 
-            <androidx.appcompat.widget.AppCompatEditText
+                android:paddingTop="10dp"
+
+                android:textColor="@color/secondary_black_LM"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/floor"
                 android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:textColor="@color/secondary_black_LM" />
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:paddingTop="10dp"
+                android:background="@drawable/shape_for_editext"
+                android:textColor="@color/secondary_black_LM"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -91,11 +100,13 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/doctors_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:background="@drawable/shape_for_editext"
             android:textColor="@color/secondary_black_LM" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -107,11 +118,13 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/office_hours"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:background="@drawable/shape_for_editext"
             android:textColor="@color/secondary_black_LM" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -123,12 +136,14 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/phone_number"
+            android:textSize="18sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:enabled="false"
+            android:paddingTop="10dp"
+            android:background="@drawable/shape_for_editext"
             android:textColor="@color/secondary_black_LM" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -140,12 +155,14 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/website_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:enabled="false"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:background="@drawable/shape_for_editext"
             android:linksClickable="true"
             android:textColor="@color/secondary_black_LM"
             android:textColorLink="@color/primary_blue_LM" />
