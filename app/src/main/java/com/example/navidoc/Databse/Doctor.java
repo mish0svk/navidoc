@@ -20,9 +20,9 @@ public class Doctor
     String end_time;
     int isFavorite;
     int department_id;
+    int history_id;
 
-    public Doctor(String name, String ambulance_name, String phone_number, String email, int door_number, String web_site, String start_time, String end_time, int isFavorite, int department_id)
-    {
+    public Doctor(String name, String ambulance_name, String phone_number, String email, int door_number, String web_site, String start_time, String end_time, int isFavorite, int department_id, int history_id) {
         this.name = name;
         this.ambulance_name = ambulance_name;
         this.phone_number = phone_number;
@@ -33,6 +33,7 @@ public class Doctor
         this.end_time = end_time;
         this.isFavorite = isFavorite;
         this.department_id = department_id;
+        this.history_id = history_id;
     }
 
     public void setDoctor_ID(int doctor_ID)
@@ -95,6 +96,14 @@ public class Doctor
     public int getIsFavorite()
     {
         return isFavorite;
+    }
+
+    public int getHistory_id() {
+        return history_id;
+    }
+
+    public void setHistory_id(int history_id) {
+        this.history_id = history_id;
     }
 
     @Override

@@ -1,12 +1,14 @@
 package com.example.navidoc.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -24,9 +26,14 @@ import com.example.navidoc.adapters.OnPlaceListener;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.adapters.PlaceRecycleAdapter;
 import com.example.navidoc.R;
+import com.example.navidoc.Databse.History;
 import com.google.android.material.navigation.NavigationView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -113,7 +120,10 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
                     break;
                 case R.id.nav_my_places:
                     Log.d(TAG, "already here");
-
+                    break;
+                case R.id.nav_history:
+                    Log.d(TAG, "History");
+                    intent = new Intent(this, HistoryActivity.class);
                     break;
                 default:
                     Log.d(TAG, "others");
@@ -155,7 +165,7 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
     public void onNavigateClick(int position)
     {
         Log.d(TAG, "onNavigateClick: " + position);
-        MessageToast.makeToast(this, "navigate", Toast.LENGTH_SHORT).show();
+        this.createNavigateDialog(position);
     }
 
     @Override
@@ -187,5 +197,67 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
         touchedPlace.setFavourite(favourite);
         places.remove(position);
         placeRecycleAdapter.notifyItemRemoved(position);
+    }
+
+    public void createNavigateDialog(int position)
+    {
+        Place touchedPlace = places.get(position);
+        // Build an AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Set a title for alert dialog
+        builder.setTitle("NaviDoc");
+
+        String navigateTo = "Do you want launch navigation to " + touchedPlace.getAmbulance() +"("+ touchedPlace.getDoctorsName() + ")";
+        // Ask the final question
+        builder.setMessage(navigateTo);
+
+        // Set the alert dialog yes button click listener
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do something when user clicked the Yes button
+                // Set the TextView visibility GONE
+                addNewHistory();
+
+                List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
+                if (Objects.requireNonNull(tmp).size() > 0)
+                {
+                    Doctor doctor = tmp.get(0);
+                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
+                    dao.updatedDoctor(doctor);
+                }
+
+            }
+        });
+
+        // Set the alert dialog no button click listener
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do something when No button clicked
+                Toast.makeText(getApplicationContext(),
+                        "No Button Clicked",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        // Display the alert dialog on interface
+        dialog.show();
+    }
+
+    public void addNewHistory()
+    {
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(date);
+        String[] arrSplit = strDate.split(" ");
+        String time = arrSplit[1];
+        String date1 = arrSplit[0];
+        Log.d(TAG, "Datetime: " + date1);
+        Log.d(TAG, "Datetime: " + time);
+        History history = new History(date1,time);
+
+        dao.insertHistory(history);
     }
 }

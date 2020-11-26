@@ -53,6 +53,9 @@
         <activity android:name=".activities.MyPlacesActivity"
             android:label="@string/my_places"/>
 
+        <activity android:name=".HistoryActivity"
+            android:label="history"/>
+
         <meta-data android:name="com.google.ar.core"  android:value="required" />
 
         <service
