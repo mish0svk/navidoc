@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -11,13 +11,15 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.navidoc.MainActivity;
+import com.example.navidoc.adapters.Place;
+import com.example.navidoc.R;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;

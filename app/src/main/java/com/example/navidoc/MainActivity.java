@@ -12,6 +12,11 @@ import com.example.navidoc.Databse.DAO;
 import com.example.navidoc.Databse.DatabaseHelper;
 import com.example.navidoc.Databse.Department;
 import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.activities.CurrentLocationActivity;
+import com.example.navidoc.activities.MyPlacesActivity;
+import com.example.navidoc.activities.PlacesActivity;
+import com.example.navidoc.adapters.Place;
+import com.example.navidoc.adapters.PlaceSearchAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -123,6 +128,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.nav_current_location:
                     Log.d(TAG, "current location");
+                    intent = new Intent(this, CurrentLocationActivity.class);
                     break;
                 case R.id.nav_my_places:
                     Log.d(TAG, "my places");

@@ -37,4 +37,8 @@
     <string name="rem_from_fav">Removed from favourite</string>
     <string name="tap_to_navigate">Tap to navigate</string>
     <string name="my_places">My places</string>
+    <string name="scan_bttn">Scan for devices</string>
+    <string name="foreground_scan_description">Scanning activity</string>
+    <string name="start_scanning_service">start scanning</string>
+    <string name="stop_scanning_service">stop scanning</string>
 </resources>

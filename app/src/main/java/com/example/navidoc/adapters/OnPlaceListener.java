@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 public interface OnPlaceListener
 {

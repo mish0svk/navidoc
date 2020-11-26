@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.navidoc.R;
 
 import java.util.List;
 

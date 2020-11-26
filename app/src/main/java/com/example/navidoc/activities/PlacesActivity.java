@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,6 +21,13 @@ import com.example.navidoc.Databse.DAO;
 import com.example.navidoc.Databse.DatabaseHelper;
 import com.example.navidoc.Databse.Department;
 import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.MainActivity;
+import com.example.navidoc.utils.MessageToast;
+import com.example.navidoc.adapters.OnPlaceListener;
+import com.example.navidoc.adapters.Place;
+import com.example.navidoc.adapters.PlaceRecycleAdapter;
+import com.example.navidoc.adapters.PlaceSearchAdapter;
+import com.example.navidoc.R;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,6 +16,7 @@ import com.example.navidoc.Databse.DAO;
 import com.example.navidoc.Databse.DatabaseHelper;
 import com.example.navidoc.Databse.Department;
 import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.R;
 
 import java.util.ArrayList;
 import java.util.List;
