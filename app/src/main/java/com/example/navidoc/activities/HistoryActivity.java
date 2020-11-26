@@ -1,7 +1,6 @@
-package com.example.navidoc;
+package com.example.navidoc.activities;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +15,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.navidoc.Databse.DAO;
-import com.example.navidoc.Databse.DatabaseHelper;
-import com.example.navidoc.Databse.Department;
-import com.example.navidoc.Databse.Doctor;
-import com.example.navidoc.Databse.History;
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
+import com.example.navidoc.database.History;
+import com.example.navidoc.MainActivity;
+import com.example.navidoc.R;
+import com.example.navidoc.adapters.OnPlaceListener;
+import com.example.navidoc.adapters.Place;
+import com.example.navidoc.adapters.PlaceRecycleAdapter;
+import com.example.navidoc.utils.MessageToast;
 import com.google.android.material.navigation.NavigationView;
 
 import java.text.DateFormat;
@@ -31,14 +36,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class HistoryActivity extends AppCompatActivity implements  OnPlaceListener
+public class HistoryActivity extends AppCompatActivity implements OnPlaceListener
 {
 
     private NavigationView navigationView;
     private RecyclerView listView;
     private PlaceRecycleAdapter placeRecycleAdapter;
-    private List<Place> places = new ArrayList<>();
-    private DatabaseHelper db;
+    private final List<Place> places = new ArrayList<>();
     private DAO dao;
     private static final String TAG = "HistoryActivity";
 
@@ -57,7 +61,7 @@ public class HistoryActivity extends AppCompatActivity implements  OnPlaceListen
         navigationView.setCheckedItem(R.id.nav_history);
         this.findAndCloseNavigation();
         this.listView = findViewById(R.id.scroll_list_places);
-        db = DatabaseHelper.getInstance(this);
+        DatabaseHelper db = DatabaseHelper.getInstance(this);
         dao = db.dao();
         renderScrollList();
         readDataFromDb();
@@ -87,18 +91,14 @@ public class HistoryActivity extends AppCompatActivity implements  OnPlaceListen
         this.listView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private boolean findAndCloseNavigation()
+    private void findAndCloseNavigation()
     {
         DrawerLayout layout = findViewById(R.id.drawer_layout);
 
         if (layout.isDrawerOpen(GravityCompat.START))
         {
             layout.closeDrawer(GravityCompat.START);
-
-            return true;
         }
-
-        return false;
     }
 
         @SuppressLint("NonConstantResourceId")
@@ -199,32 +199,26 @@ public class HistoryActivity extends AppCompatActivity implements  OnPlaceListen
         builder.setMessage(navigateTo);
 
         // Set the alert dialog yes button click listener
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when user clicked the Yes button
-                // Set the TextView visibility GONE
-                addNewHistory();
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            // Do something when user clicked the Yes button
+            // Set the TextView visibility GONE
+            addNewHistory();
 
-                List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
-                if (Objects.requireNonNull(tmp).size() > 0)
-                {
-                    Doctor doctor = tmp.get(0);
-                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
-                    dao.updatedDoctor(doctor);
-                }
-
+            List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
+            if (Objects.requireNonNull(tmp).size() > 0)
+            {
+                Doctor doctor = tmp.get(0);
+                doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
+                dao.updatedDoctor(doctor);
             }
+
         });
 
         // Set the alert dialog no button click listener
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when No button clicked
-                Toast.makeText(getApplicationContext(),
-                        "No Button Clicked",Toast.LENGTH_SHORT).show();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            // Do something when No button clicked
+            Toast.makeText(getApplicationContext(),
+                    "No Button Clicked",Toast.LENGTH_SHORT).show();
         });
 
         AlertDialog dialog = builder.create();
@@ -232,10 +226,11 @@ public class HistoryActivity extends AppCompatActivity implements  OnPlaceListen
         dialog.show();
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void addNewHistory()
     {
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
         String[] arrSplit = strDate.split(" ");
         String time = arrSplit[1];

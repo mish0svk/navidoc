@@ -1,7 +1,6 @@
 package com.example.navidoc;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,16 +9,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.navidoc.Databse.DAO;
-import com.example.navidoc.Databse.DatabaseHelper;
-import com.example.navidoc.Databse.Department;
-import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
 import com.example.navidoc.activities.CurrentLocationActivity;
+import com.example.navidoc.activities.HistoryActivity;
 import com.example.navidoc.activities.MyPlacesActivity;
 import com.example.navidoc.activities.PlacesActivity;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.adapters.PlaceSearchAdapter;
-import com.example.navidoc.Databse.History;
+import com.example.navidoc.database.History;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
     private AutoCompleteTextView searchField;
     private NavigationView navigationView;
     private ImageButton submitSearch;
-    private DatabaseHelper db2;
     private DAO dao;
     private static final String TAG = "MainActivity";
 
@@ -81,9 +80,7 @@ public class MainActivity extends AppCompatActivity
         PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
         searchField.setThreshold(1);
         searchField.setAdapter(placeSearchAdapter);
-        searchField.setOnItemClickListener((parent, view, position, id) -> {
-           createNavigateDialog();
-        });
+        searchField.setOnItemClickListener((parent, view, position, id) -> createNavigateDialog());
     }
 
     public void createNavigateDialog()
@@ -103,40 +100,31 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Datetime: " + searchInput);
 
         // Set the alert dialog yes button click listener
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when user clicked the Yes button
-                // Set the TextView visibility GONE
-                addNewHistory();
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            // Do something when user clicked the Yes button
+            // Set the TextView visibility GONE
+            addNewHistory();
 
 
-                if (Objects.requireNonNull(tmp).size() > 0)
-                {
-                    Doctor doctor = tmp.get(0);
-                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
-                    dao.updatedDoctor(doctor);
-                }
-
+            if (Objects.requireNonNull(tmp).size() > 0)
+            {
+                Doctor doctor1 = tmp.get(0);
+                doctor1.setHistory_id(dao.getLastHistory().getHistory_ID());
+                dao.updatedDoctor(doctor1);
             }
+
         });
 
         // Set the alert dialog no button click listener
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when No button clicked
-                Toast.makeText(getApplicationContext(),
-                        "No Button Clicked",Toast.LENGTH_SHORT).show();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            // Do something when No button clicked
+            Toast.makeText(getApplicationContext(),
+                    "No Button Clicked",Toast.LENGTH_SHORT).show();
         });
 
-        builder.setNeutralButton("Go to Places", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when No button clicked
-                startPlacesActivityWithQuery();
-            }
+        builder.setNeutralButton("Go to Places", (dialog, which) -> {
+            // Do something when No button clicked
+            startPlacesActivityWithQuery();
         });
 
         AlertDialog dialog = builder.create();
@@ -144,10 +132,11 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void addNewHistory()
     {
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
         String[] arrSplit = strDate.split(" ");
         String time = arrSplit[1];
@@ -161,9 +150,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setSubmitSearchButtonListener()
     {
-        submitSearch.setOnClickListener(view -> {
-           startPlacesActivityWithQuery();
-        });
+        submitSearch.setOnClickListener(view -> startPlacesActivityWithQuery());
     }
 
     private void startPlacesActivityWithQuery()
@@ -265,10 +252,11 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    @SuppressLint("SdCardPath")
     private void ImportDataTOdatabase()
     {
 
-        db2 = DatabaseHelper.getInstance(this);
+        DatabaseHelper db2 = DatabaseHelper.getInstance(this);
         dao = db2.dao();
         Log.d(TAG, "ImportDataTOdatabase: ");
 

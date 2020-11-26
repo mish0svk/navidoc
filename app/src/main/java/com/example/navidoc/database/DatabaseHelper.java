@@ -1,4 +1,4 @@
-package com.example.navidoc.Databse;
+package com.example.navidoc.database;
 
 import android.content.Context;
 import androidx.room.Database;

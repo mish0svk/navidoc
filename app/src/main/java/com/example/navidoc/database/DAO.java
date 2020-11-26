@@ -1,4 +1,4 @@
-package com.example.navidoc.Databse;
+package com.example.navidoc.database;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -10,6 +10,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Dao
 public interface DAO
 {

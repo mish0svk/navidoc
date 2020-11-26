@@ -1,7 +1,6 @@
 package com.example.navidoc.activities;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +18,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.navidoc.Databse.DAO;
-import com.example.navidoc.Databse.DatabaseHelper;
-import com.example.navidoc.Databse.Department;
-import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
 import com.example.navidoc.MainActivity;
 import com.example.navidoc.utils.MessageToast;
 import com.example.navidoc.adapters.OnPlaceListener;
@@ -30,7 +29,7 @@ import com.example.navidoc.adapters.Place;
 import com.example.navidoc.adapters.PlaceRecycleAdapter;
 import com.example.navidoc.adapters.PlaceSearchAdapter;
 import com.example.navidoc.R;
-import com.example.navidoc.Databse.History;
+import com.example.navidoc.database.History;
 import com.google.android.material.navigation.NavigationView;
 
 import java.text.DateFormat;
@@ -44,13 +43,12 @@ import java.util.stream.Collectors;
 
 public class PlacesActivity  extends AppCompatActivity implements OnPlaceListener
 {
-    private List<Place> places = new ArrayList<>();
+    private final List<Place> places = new ArrayList<>();
     private RecyclerView listView;
     private static final String TAG = "PlacesActivity";
     private PlaceRecycleAdapter placeRecycleAdapter;
     private NavigationView navigationView;
     private AutoCompleteTextView searchField;
-    private DatabaseHelper db;
     private DAO dao;
     private ImageButton submitSearch;
 
@@ -72,7 +70,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         searchField = findViewById(R.id.search_field);
         submitSearch = findViewById(R.id.submit_search);
 
-        if (getIntent().hasExtra("searchInput") && !getIntent().getStringExtra("searchInput").isEmpty())
+        if (getIntent().hasExtra("searchInput") && !Objects.requireNonNull(getIntent().getStringExtra("searchInput")).isEmpty())
         {
             searchField.setText(getIntent().getStringExtra("searchInput"));
         }
@@ -85,7 +83,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         setSubmitSearchListener();
         setNavigationListener();
 
-        db = DatabaseHelper.getInstance(this);
+        DatabaseHelper db = DatabaseHelper.getInstance(this);
         dao = db.dao();
 
         searchRelevantData();
@@ -99,9 +97,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
 
     private void setSubmitSearchListener()
     {
-        submitSearch.setOnClickListener(view -> {
-            readDataFromDb(searchField.getText().toString());
-        });
+        submitSearch.setOnClickListener(view -> readDataFromDb(searchField.getText().toString()));
     }
 
     private void searchRelevantData()
@@ -110,9 +106,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
         searchField.setThreshold(1);
         searchField.setAdapter(placeSearchAdapter);
-        searchField.setOnItemClickListener((parent, view, position, id) -> {
-            readDataFromDb(searchField.getText().toString());
-        });
+        searchField.setOnItemClickListener((parent, view, position, id) -> readDataFromDb(searchField.getText().toString()));
     }
 
     private void readDataFromDb(String query)
@@ -268,32 +262,26 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         builder.setMessage(navigateTo);
 
         // Set the alert dialog yes button click listener
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when user clicked the Yes button
-                // Set the TextView visibility GONE
-                addNewHistory();
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            // Do something when user clicked the Yes button
+            // Set the TextView visibility GONE
+            addNewHistory();
 
-                List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
-                if (Objects.requireNonNull(tmp).size() > 0)
-                {
-                    Doctor doctor = tmp.get(0);
-                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
-                    dao.updatedDoctor(doctor);
-                }
-
+            List<Doctor> tmp = dao.getDoctorsByName(touchedPlace.getDoctorsName());
+            if (Objects.requireNonNull(tmp).size() > 0)
+            {
+                Doctor doctor = tmp.get(0);
+                doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
+                dao.updatedDoctor(doctor);
             }
+
         });
 
         // Set the alert dialog no button click listener
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do something when No button clicked
-                Toast.makeText(getApplicationContext(),
-                        "No Button Clicked",Toast.LENGTH_SHORT).show();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            // Do something when No button clicked
+            Toast.makeText(getApplicationContext(),
+                    "No Button Clicked",Toast.LENGTH_SHORT).show();
         });
 
         AlertDialog dialog = builder.create();
@@ -301,10 +289,11 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         dialog.show();
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void addNewHistory()
     {
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
         String[] arrSplit = strDate.split(" ");
         String time = arrSplit[1];
