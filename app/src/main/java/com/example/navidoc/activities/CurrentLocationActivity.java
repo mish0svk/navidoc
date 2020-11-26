@@ -8,7 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.navidoc.MainActivity;
 import com.example.navidoc.utils.MessageToast;
@@ -29,22 +33,33 @@ import com.example.navidoc.services.BackgroundScanService;
 import com.google.android.material.navigation.NavigationView;
 import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class CurrentLocationActivity extends AppCompatActivity
 {
     private NavigationView navigationView;
     private Intent serviceIntent;
     private BroadcastReceiver broadcastReceiver;
-    private List<BeaconDevice> beacons;
-    private TextView distance, address;
+    private BeaconDevice closestBeaconDevice;
+    private TextView distance, address, uniqueId, noBeacons;
     private static final String TAG = "CurrentLocationActivity";
     private static final int REQUEST_CODE_FOR_PERMISSIONS = 100;
+    private SwipeRefreshLayout refreshLayout;
+    private final Handler handler= new Handler(Looper.getMainLooper());
+    private static final int DURATION_TIME_S = 20;
+    private String lastUpdatedTime = "";
+    private SimpleDateFormat formatter;
+    private Map<String, String> beaconUniqueIds;
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -61,6 +76,11 @@ public class CurrentLocationActivity extends AppCompatActivity
         this.navigationView.setCheckedItem(R.id.nav_current_location);
         this.distance = findViewById(R.id.beacon_distance);
         this.address = findViewById(R.id.beacon_address);
+        this.refreshLayout = findViewById(R.id.swipe_up_to_refresh);
+        this.uniqueId = findViewById(R.id.unique_id);
+        this.noBeacons = findViewById(R.id.no_beacons);
+        this.formatter = new SimpleDateFormat("HH:mm:ss");
+        setUniqueIds();
 
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
@@ -68,60 +88,121 @@ public class CurrentLocationActivity extends AppCompatActivity
         }
         setNavigationListener();
 
+        this.refreshLayout.setOnRefreshListener(() -> {
+            Log.i(TAG, "REFRESH ");
+            stopService(serviceIntent);
+            startService(serviceIntent);
+            refreshLayout.setRefreshing(false);
+        });
+
         checkPermissions();
 
         this.serviceIntent = BackgroundScanService.createIntent(this);
+        setUpBroadcastReceiver();
+
+        startService(serviceIntent);
+
+        this.handler.postDelayed(this::calculateTime, DURATION_TIME_S * 1000);
+    }
+
+    private void setUniqueIds()
+    {
+        if (this.beaconUniqueIds == null)
+        {
+            this.beaconUniqueIds = new HashMap<>();
+        }
+
+        this.beaconUniqueIds.put("C2:7E:8A:C4:27:2F", "UuaJiX");
+        this.beaconUniqueIds.put("FC:74:76:7C:5F:2E", "UutvWt");
+        this.beaconUniqueIds.put("FB:5A:65:C8:66:B5", "Uujp66");
+        this.beaconUniqueIds.put("C4:A6:40:07:67:FD", "UuGhGx");
+        this.beaconUniqueIds.put("F3:26:2A:C2:DD:2B", "UuehLL");
+    }
+
+    private void calculateTime()
+    {
+        if (lastUpdatedTime.isEmpty())
+        {
+            noBeacons.setVisibility(View.VISIBLE);
+            distance.setVisibility(View.INVISIBLE);
+            address.setVisibility(View.INVISIBLE);
+            uniqueId.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            String newTime = formatter.format(Calendar.getInstance().getTime());
+            Duration difference = Duration.between(LocalTime.parse(lastUpdatedTime), LocalTime.parse(newTime));
+            if (difference.getSeconds() > DURATION_TIME_S)
+            {
+                noBeacons.setVisibility(View.VISIBLE);
+                distance.setVisibility(View.INVISIBLE);
+                address.setVisibility(View.INVISIBLE);
+                uniqueId.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        this.handler.postDelayed(this::calculateTime, DURATION_TIME_S * 1000);
+    }
+
+    private void setUpBroadcastReceiver()
+    {
         this.broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                if (beacons == null)
+                //no beacon device so far
+                if (closestBeaconDevice == null)
                 {
-                    beacons = new ArrayList<>();
+                    closestBeaconDevice = intent.getParcelableExtra(BackgroundScanService.EXTRA_DEVICE);
+                    displayClosestBeacon();
+                    return;
                 }
 
                 BeaconDevice device = intent.getParcelableExtra(BackgroundScanService.EXTRA_DEVICE);
-                List<BeaconDevice> filteredBeacons = beacons.stream()
-                        .filter(beacon -> beacon.getAddress().equals(Objects.requireNonNull(device).getAddress())).collect(Collectors.toList());
 
-                if (filteredBeacons.size() != 0)
+                if (device == null)
                 {
-                    beacons.remove(filteredBeacons.get(0));
+                    return;
                 }
 
-                beacons.add(device);
+
+                double leftVal = calculateAccuracy(closestBeaconDevice.getTxPower(), closestBeaconDevice.getRssi());
+                double rightVal = calculateAccuracy(device.getTxPower(), device.getRssi());
+
+                Log.d(TAG, "displayClosestBeacon: LEFT VAL :" + leftVal + " -> " + closestBeaconDevice.getAddress());
+                Log.d(TAG, "displayClosestBeacon: RIGHT VAL :" + rightVal + " -> " + device.getAddress());
+
+                //if same beacon or distance is closer
+                if (closestBeaconDevice.getAddress().equals(device.getAddress()) || leftVal > rightVal)
+                {
+                    closestBeaconDevice = device;
+                }
                 displayClosestBeacon();
             }
         };
-
-        startService(serviceIntent);
     }
 
     private void displayClosestBeacon()
     {
-        if (beacons == null || beacons.size() == 0)
+        if (closestBeaconDevice != null)
         {
-            return;
-        }
+            noBeacons.setVisibility(View.INVISIBLE);
+            distance.setVisibility(View.VISIBLE);
+            address.setVisibility(View.VISIBLE);
+            uniqueId.setVisibility(View.VISIBLE);
 
-        BeaconDevice device = beacons.get(0);
-
-        for (BeaconDevice beacon: beacons)
-        {
-            double leftVal = calculateAccuracy(device.getTxPower(), device.getRssi());
-            double rightVal = calculateAccuracy(beacon.getTxPower(), beacon.getRssi());
-
-            Log.d(TAG, "displayClosestBeacon: LEFT VAL :" + leftVal + " -> " + device.getAddress());
-            Log.d(TAG, "displayClosestBeacon: RIGHT VAL :" + rightVal + " -> " + beacon.getAddress());
-
-            if (leftVal > rightVal )
+            this.lastUpdatedTime = formatter.format(Calendar.getInstance().getTime());
+            this.distance.setText(String.valueOf(calculateAccuracy(closestBeaconDevice.getTxPower(), closestBeaconDevice.getRssi())));
+            this.address.setText(closestBeaconDevice.getAddress());
+            if (this.beaconUniqueIds.containsKey(closestBeaconDevice.getAddress()))
             {
-                device = beacon;
+                this.uniqueId.setText(beaconUniqueIds.get(closestBeaconDevice.getAddress()));
+            }
+            else
+            {
+                this.uniqueId.setText(R.string.uknown_id);
             }
         }
-
-        this.distance.setText(String.valueOf(calculateAccuracy(device.getTxPower(), device.getRssi())));
-        this.address.setText(device.getAddress());
     }
 
     private void checkPermissions()

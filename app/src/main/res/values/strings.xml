@@ -43,4 +43,7 @@
     <string name="stop_scanning_service">stop scanning</string>
     <string name="distance">Distance</string>
     <string name="address">Address</string>
+    <string name="unique_id">Unique ID</string>
+    <string name="uknown_id">Unknown id</string>
+    <string name="no_beacons_close">There is no beacons close to your phone.\nSearching for others</string>
 </resources>
