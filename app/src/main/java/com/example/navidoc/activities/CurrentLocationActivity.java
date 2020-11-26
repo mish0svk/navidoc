@@ -1,33 +1,26 @@
 package com.example.navidoc.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.navidoc.MainActivity;
-import com.example.navidoc.utils.MessageToast;
+import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.R;
 import com.example.navidoc.services.BackgroundScanService;
 import com.google.android.material.navigation.NavigationView;
@@ -36,22 +29,17 @@ import com.kontakt.sdk.android.ble.device.BeaconDevice;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CurrentLocationActivity extends AppCompatActivity
 {
-    private NavigationView navigationView;
     private Intent serviceIntent;
     private BroadcastReceiver broadcastReceiver;
     private BeaconDevice closestBeaconDevice;
     private TextView distance, address, uniqueId, noBeacons;
     private static final String TAG = "CurrentLocationActivity";
-    private static final int REQUEST_CODE_FOR_PERMISSIONS = 100;
     private SwipeRefreshLayout refreshLayout;
     private final Handler handler= new Handler(Looper.getMainLooper());
     private static final int DURATION_TIME_S = 20;
@@ -69,11 +57,11 @@ public class CurrentLocationActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        this.navigationView.setCheckedItem(R.id.nav_current_location);
+        navigationView.setCheckedItem(R.id.nav_current_location);
         this.distance = findViewById(R.id.beacon_distance);
         this.address = findViewById(R.id.beacon_address);
         this.refreshLayout = findViewById(R.id.swipe_up_to_refresh);
@@ -86,7 +74,8 @@ public class CurrentLocationActivity extends AppCompatActivity
         {
             drawer.closeDrawer(GravityCompat.START);
         }
-        setNavigationListener();
+        MenuUtils menuUtils = new MenuUtils(this, R.id.nav_current_location);
+        navigationView.setNavigationItemSelectedListener(menuUtils);
 
         this.refreshLayout.setOnRefreshListener(() -> {
             Log.i(TAG, "REFRESH ");
@@ -94,8 +83,6 @@ public class CurrentLocationActivity extends AppCompatActivity
             startService(serviceIntent);
             refreshLayout.setRefreshing(false);
         });
-
-        checkPermissions();
 
         this.serviceIntent = BackgroundScanService.createIntent(this);
         setUpBroadcastReceiver();
@@ -203,77 +190,6 @@ public class CurrentLocationActivity extends AppCompatActivity
                 this.uniqueId.setText(R.string.uknown_id);
             }
         }
-    }
-
-    private void checkPermissions()
-    {
-        List<String> permissions = new ArrayList<>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.INTERNET,
-                Manifest.permission.FOREGROUND_SERVICE));
-
-        permissions.forEach(permission -> {
-            int check = ContextCompat.checkSelfPermission(this, permission);
-            if (PackageManager.PERMISSION_GRANTED != check)
-            {
-                ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_CODE_FOR_PERMISSIONS);
-            }
-        });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
-            if (REQUEST_CODE_FOR_PERMISSIONS == requestCode)
-            {
-                MessageToast.makeToast(this, "Permissions granted!", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else
-        {
-            Toast.makeText(this, "Location permissions are mandatory to use BLE features on Android 6.0 or higher", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, MainActivity.class));
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    private void setNavigationListener()
-    {
-        navigationView.setNavigationItemSelectedListener(item -> {
-            Log.d(TAG, String.valueOf(item.getItemId()));
-            Intent intent = null;
-            switch (item.getItemId())
-            {
-                case R.id.nav_home:
-                    Log.d(TAG, "HOME");
-                    stopService(serviceIntent);
-                    intent = new Intent(this, MainActivity.class);
-                    break;
-                case R.id.nav_places:
-                    Log.d(TAG, "places");
-                    stopService(serviceIntent);
-                    intent = new Intent(this, PlacesActivity.class);
-                    break;
-                case R.id.nav_current_location:
-                    Log.d(TAG, "already here");
-                    break;
-                case R.id.nav_my_places:
-                    stopService(serviceIntent);
-                    Log.d(TAG, "my places");
-                    intent = new Intent(this, MyPlacesActivity.class);
-                    break;
-                default:
-                    Log.d(TAG, "others");
-            }
-
-            if (intent != null)
-            {
-                startActivity(intent);
-            }
-
-            return false;
-        });
     }
 
     @Override

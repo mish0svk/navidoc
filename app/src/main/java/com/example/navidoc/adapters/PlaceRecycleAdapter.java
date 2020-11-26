@@ -110,7 +110,7 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
                     break;
                 case R.id.item_navigate_layout:
                 case R.id.navigate_item:
-                case R.id.appCompatImageButton:
+                case R.id.navigate:
                     onPlaceListener.onNavigateClick(getAdapterPosition());
                     break;
                 case R.id.item_favourite:

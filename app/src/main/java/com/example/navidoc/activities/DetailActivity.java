@@ -1,18 +1,15 @@
 package com.example.navidoc.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
@@ -20,30 +17,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.navidoc.MainActivity;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.R;
-import com.example.navidoc.database.DAO;
-import com.example.navidoc.database.DatabaseHelper;
-import com.example.navidoc.database.Doctor;
-import com.example.navidoc.database.History;
+import com.example.navidoc.utils.AbstractDialog;
+import com.example.navidoc.utils.MenuUtils;
 import com.google.android.material.navigation.NavigationView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity
 {
-    private NavigationView navigationView;
-    private AppCompatTextView ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
     private static final String TAG = "DetailActivity";
-    private DAO dao;
-    private ImageButton navButton;
-    private Place places;
+    private AppCompatTextView ambulance, department, floor, doctorsName, officeHours, phoneNumber, websiteUrl;
+    private ImageButton navButton, back;
+    private Place place;
+    private String activityCalled, query;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -54,7 +42,7 @@ public class DetailActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -65,26 +53,33 @@ public class DetailActivity extends AppCompatActivity
         phoneNumber = findViewById(R.id.phone_number);
         websiteUrl = findViewById(R.id.website_url);
         doctorsName = findViewById(R.id.doctors_name);
-        navButton = findViewById(R.id.appCompatImageButton);
-        DatabaseHelper db = DatabaseHelper.getInstance(this);
-        dao = db.dao();
+        navButton = findViewById(R.id.navigate);
+        back = findViewById(R.id.back);
+
+        if (getIntent().hasExtra("activity") && !Objects.requireNonNull(getIntent().getStringExtra("activity")).isEmpty())
+        {
+            activityCalled = getIntent().getStringExtra("activity");
+            query = (Objects.requireNonNull(activityCalled).equals("Places")) ? getIntent().getStringExtra("query") : "";
+        }
 
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
             drawer.closeDrawer(GravityCompat.START);
         }
-        setNavigationListener();
+
+        MenuUtils menuUtils = new MenuUtils(this, -1);
+        navigationView.setNavigationItemSelectedListener(menuUtils);
 
         if (getIntent().hasExtra("selected_place") && getIntent().getParcelableExtra("selected_place") != null)
         {
             setDetails(Objects.requireNonNull(getIntent().getParcelableExtra("selected_place")));
         }
 
-        places =  Objects.requireNonNull(getIntent().getParcelableExtra("selected_place"));
+        place =  Objects.requireNonNull(getIntent().getParcelableExtra("selected_place"));
 
         setWebPageListener();
         setPhoneCallListener();
-        setNAvButtonListener();
+        setButtonsListeners();
     }
 
     private void setPhoneCallListener()
@@ -135,109 +130,40 @@ public class DetailActivity extends AppCompatActivity
     }
 
 
-    @SuppressLint("NonConstantResourceId")
-    private void setNavigationListener()
-    {
-        navigationView.setNavigationItemSelectedListener(item -> {
-            String TAG = "TAG";
-            Log.d(TAG, String.valueOf(item.getItemId()));
-            Intent intent = null;
-            switch (item.getItemId())
-            {
-                case R.id.nav_home:
-                    Log.d(TAG, "HOME");
-                    intent = new Intent(this, MainActivity.class);
-                    break;
-                case R.id.nav_places:
-                    Log.d(TAG, "places");
-                    intent = new Intent(this, PlacesActivity.class);
-                    break;
-                case R.id.nav_current_location:
-                    Log.d(TAG, "current location");
-                    break;
-                case R.id.nav_my_places:
-                    Log.d(TAG, "my places");
-                    intent = new Intent(this, MyPlacesActivity.class);
-                    break;
-                case R.id.nav_history:
-                    Log.d(TAG, "History");
-                    intent = new Intent(this, HistoryActivity.class);
-                    break;
-                default:
-                    Log.d(TAG, "others");
-            }
-
-            if (intent != null)
-            {
-                startActivity(intent);
-            }
-
-            return false;
-        });
-    }
-
-
-    private void setNAvButtonListener()
+    private void setButtonsListeners()
     {
         navButton.setOnClickListener(view -> createNavigateDialog());
+        back.setOnClickListener(view ->{
+            Intent intent = null;
+            switch (activityCalled)
+            {
+                case "History":
+                    intent = new Intent(this, HistoryActivity.class);
+                    break;
+                case "My places":
+                    intent = new Intent(this, MyPlacesActivity.class);
+                    break;
+                case "Places":
+                    intent = new Intent(this, PlacesActivity.class);
+                    intent.putExtra("searchInput", query);
+                    break;
+                default:
+                    Log.d(TAG, "setButtonsListeners: SOMETHING IS WRONG");
+                    break;
+            }
+
+            startActivity(intent);
+        });
     }
 
 
     public void createNavigateDialog()
     {
-        // Build an AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String navigateTo = getResources().getString(R.string.navigate_to) + place.getAmbulance()
+                +"("+ place.getDoctorsName() + ")";
 
-        // Set a title for alert dialog
-        builder.setTitle("NaviDoc");
-
-
-        String navigateTo = "Do you want launch navigation to " + places.getAmbulance() +"("+ places.getDoctorsName() + ")";
-        // Ask the final question
-        builder.setMessage(navigateTo);
-
-        // Set the alert dialog yes button click listener
-        builder.setPositiveButton("Yes", (dialog, which) -> {
-            // Do something when user clicked the Yes button
-            // Set the TextView visibility GONE
-            addNewHistory();
-
-            List<Doctor> tmp = dao.getDoctorsByName(places.getDoctorsName());
-            if (Objects.requireNonNull(tmp).size() > 0)
-            {
-                Doctor doctor = tmp.get(0);
-                doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
-                dao.updatedDoctor(doctor);
-            }
-
-        });
-
-        // Set the alert dialog no button click listener
-        builder.setNegativeButton("No", (dialog, which) -> {
-            // Do something when No button clicked
-            Toast.makeText(getApplicationContext(),
-                    "No Button Clicked",Toast.LENGTH_SHORT).show();
-        });
-
-        AlertDialog dialog = builder.create();
-        // Display the alert dialog on interface
-        dialog.show();
+        AbstractDialog dialog = AbstractDialog.getInstance();
+        dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
+                .sePositiveButton(place).setNegativeButton(this).getBuilder().create().show();
     }
-
-    @SuppressLint("SimpleDateFormat")
-    public void addNewHistory()
-    {
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String strDate = dateFormat.format(date);
-        String[] arrSplit = strDate.split(" ");
-        String time = arrSplit[1];
-        String date1 = arrSplit[0];
-        Log.d(TAG, "Datetime: " + date1);
-        Log.d(TAG, "Datetime: " + time);
-        History history = new History(date1,time);
-
-        dao.insertHistory(history);
-    }
-
 }

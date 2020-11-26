@@ -46,4 +46,9 @@
     <string name="unique_id">Unique ID</string>
     <string name="uknown_id">Unknown id</string>
     <string name="no_beacons_close">There is no beacons close to your phone.\nSearching for others</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="navigate_to">Do you want launch navigation to </string>
+    <string name="go_to_places">Go to places</string>
+    <string name="button_no_clicked">Button \'No\' was clicked</string>
 </resources>
