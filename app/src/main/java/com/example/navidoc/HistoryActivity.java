@@ -5,11 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,25 +30,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class PlacesActivity  extends AppCompatActivity implements OnPlaceListener
+public class HistoryActivity extends AppCompatActivity implements  OnPlaceListener
 {
-    private List<Place> places = new ArrayList<>();
-    private RecyclerView listView;
-    private static final String TAG = "PlacesActivity";
-    private PlaceRecycleAdapter placeRecycleAdapter;
+
     private NavigationView navigationView;
-    private AutoCompleteTextView searchField;
+    private RecyclerView listView;
+    private PlaceRecycleAdapter placeRecycleAdapter;
+    private List<Place> places = new ArrayList<>();
     private DatabaseHelper db;
     private DAO dao;
-    private ImageButton submitSearch;
+    private static final String TAG = "HistoryActivity";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_places);
+        setContentView(R.layout.activity_history);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,71 +54,22 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setCheckedItem(R.id.nav_places);
+        navigationView.setCheckedItem(R.id.nav_history);
+        this.findAndCloseNavigation();
         this.listView = findViewById(R.id.scroll_list_places);
-        searchField = findViewById(R.id.search_field);
-        submitSearch = findViewById(R.id.submit_search);
-
-        if (getIntent().hasExtra("searchInput") && !getIntent().getStringExtra("searchInput").isEmpty())
-        {
-            searchField.setText(getIntent().getStringExtra("searchInput"));
-        }
-
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-
-        setSubmitSearchListener();
-        setNavigationListener();
-
         db = DatabaseHelper.getInstance(this);
         dao = db.dao();
-
-        searchRelevantData();
         renderScrollList();
-
-        if (!searchField.getText().toString().isEmpty())
-        {
-            readDataFromDb(searchField.getText().toString());
-        }
+        readDataFromDb();
+        setNavigationListener();
     }
 
-    private void setSubmitSearchListener()
-    {
-        submitSearch.setOnClickListener(view -> {
-            readDataFromDb(searchField.getText().toString());
-        });
-    }
 
-    private void searchRelevantData()
-    {
-        List<Place> places = new ArrayList<>();
-        PlaceSearchAdapter placeSearchAdapter = new PlaceSearchAdapter(getApplicationContext(), places);
-        searchField.setThreshold(1);
-        searchField.setAdapter(placeSearchAdapter);
-        searchField.setOnItemClickListener((parent, view, position, id) -> {
-            readDataFromDb(searchField.getText().toString());
-        });
-    }
 
-    private void readDataFromDb(String query)
-    {
-        List<Doctor> doctors = new ArrayList<>();
-
-        if (!query.isEmpty())
-        {
-            doctors.addAll(dao.getDoctorsByAmbulanceName(query));
-            doctors.addAll(dao.getDoctorsByName(query));
-            doctors.addAll(dao.getDoctorsFromDepartmentByDepartmentName(query));
-            doctors = doctors.stream().distinct().collect(Collectors.toList());
-        }
-        else
-        {
-            doctors = dao.getAllDoctors();
-        }
-
+    private void readDataFromDb() {
+        List<Doctor> doctors = new ArrayList<>(dao.getAllDoctorsWithHistory());
         places.clear();
+
         doctors.forEach(doctor -> {
             Department department = dao.getDepartmentByID(doctor.getDepartment_id());
 
@@ -132,15 +77,7 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
                     doctor.getName(), doctor.getStart_time(), doctor.getEnd_time(),
                     doctor.getPhone_number(), doctor.getWeb_site(), doctor.getIsFavorite()));
         });
-
-        placeRecycleAdapter.notifyDataSetChanged();
-
-        if (doctors.size() == 0)
-        {
-            MessageToast.makeToast(this, R.string.no_results, Toast.LENGTH_SHORT).show();
-        }
     }
-
 
     private void renderScrollList()
     {
@@ -150,20 +87,63 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
         this.listView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    @Override
-    public void onBackPressed()
+    private boolean findAndCloseNavigation()
     {
         DrawerLayout layout = findViewById(R.id.drawer_layout);
-        if (layout.isDrawerOpen(GravityCompat.START)) {
+
+        if (layout.isDrawerOpen(GravityCompat.START))
+        {
             layout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+
+            return true;
         }
+
+        return false;
     }
 
+        @SuppressLint("NonConstantResourceId")
+        private void setNavigationListener()
+        {
+            navigationView.setNavigationItemSelectedListener(item -> {
+                String TAG = "TAG";
+                Log.d(TAG, String.valueOf(item.getItemId()));
+                Intent intent = null;
+                switch (item.getItemId())
+                {
+                    case R.id.nav_home:
+                        Log.d(TAG, "home");
+                        intent = new Intent(this, MainActivity.class);
+                        break;
+                    case R.id.nav_places:
+                        Log.d(TAG, "places");
+                        intent = new Intent(this, PlacesActivity.class);
+                        break;
+                    case R.id.nav_current_location:
+                        Log.d(TAG, "current location");
+                        break;
+                    case R.id.nav_my_places:
+                        Log.d(TAG, "my places");
+                        intent = new Intent(this, MyPlacesActivity.class);
+                        break;
+                    case R.id.nav_history:
+                        Log.d(TAG, "History");
+                        break;
+                    default:
+                        Log.d(TAG, "others");
+                }
+
+                if (intent != null)
+                {
+                    startActivity(intent);
+                }
+
+                return false;
+            });
+        }
+
+
     @Override
-    public void onPlaceClick(int position)
-    {
+    public void onPlaceClick(int position) {
         Log.d(TAG, "onPlaceClick: "+ position);
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("selected_place", places.get(position));
@@ -171,15 +151,13 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
     }
 
     @Override
-    public void onNavigateClick(int position)
-    {
+    public void onNavigateClick(int position) {
         Log.d(TAG, "onNavigateClick: " + position);
         this.createNavigateDialog(position);
     }
 
     @Override
-    public void onFavouriteClick(int position)
-    {
+    public void onFavouriteClick(int position) {
         Log.d(TAG, "onNavigateClick: " + position);
         Place touchedPlace = places.get(position);
         int favourite;
@@ -205,46 +183,6 @@ public class PlacesActivity  extends AppCompatActivity implements OnPlaceListene
 
         touchedPlace.setFavourite(favourite);
         placeRecycleAdapter.notifyItemChanged(position);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    private void setNavigationListener()
-    {
-        navigationView.setNavigationItemSelectedListener(item -> {
-            String TAG = "TAG";
-            Log.d(TAG, String.valueOf(item.getItemId()));
-            Intent intent = null;
-            switch (item.getItemId())
-            {
-                case R.id.nav_home:
-                    Log.d(TAG, "HOME");
-                    intent = new Intent(this, MainActivity.class);
-                    break;
-                case R.id.nav_places:
-                    Log.d(TAG, "already here");
-                    break;
-                case R.id.nav_current_location:
-                    Log.d(TAG, "current location");
-                    break;
-                case R.id.nav_my_places:
-                    Log.d(TAG, "my places");
-                    intent = new Intent(this, MyPlacesActivity.class);
-                    break;
-                case R.id.nav_history:
-                    Log.d(TAG, "History");
-                    intent = new Intent(this, HistoryActivity.class);
-                    break;
-                default:
-                    Log.d(TAG, "others");
-            }
-
-            if (intent != null)
-            {
-                startActivity(intent);
-            }
-
-            return false;
-        });
     }
 
     public void createNavigateDialog(int position)
