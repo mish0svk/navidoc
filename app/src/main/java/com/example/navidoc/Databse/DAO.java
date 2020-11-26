@@ -55,6 +55,9 @@ public interface DAO
     @Query("SELECT * FROM doctor")
     List<Doctor> getAllDoctors();
 
+    @Query("SELECT * FROM doctor WHERE history_id != 0")
+    List<Doctor> getAllDoctorsWithHistory();
+
     @Query("SELECT * FROM doctor WHERE Doctor_ID = :id")
     Doctor getDoctorById(int id);
 
@@ -75,4 +78,35 @@ public interface DAO
 
     @Query("SELECT * FROM doctor WHERE isFavorite = :favourite")
     List<Doctor> getDoctorsByFavourite(int favourite);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertHistory(History history);
+
+    @Update
+    void updatedHistory(History history);
+
+    @Delete
+    void deleteHistory(History history);
+
+    @Query("DELETE FROM history")
+    void deleteAllHistories();
+
+    @Query("SELECT * FROM history")
+    List<History> getAllHistories();
+
+    @Query("SELECT * FROM history ORDER BY history_id DESC LIMIT 1")
+    History getLastHistory();
+
+    @Query("SELECT * FROM history ORDER BY date DESC")
+    History getLastHistories();
+
+    @Query("SELECT * FROM history WHERE History_ID = :id")
+    History getHistoryById(int id);
+
+
+    @Transaction
+    @Query("SELECT * FROM history")
+    List<DoctorsHistory> getDoctorsHistory();
+
+
 }
