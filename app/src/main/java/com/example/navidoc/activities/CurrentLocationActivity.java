@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,8 @@ import com.kontakt.sdk.android.ble.device.BeaconDevice;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CurrentLocationActivity extends AppCompatActivity
 {
@@ -38,6 +41,7 @@ public class CurrentLocationActivity extends AppCompatActivity
     private Intent serviceIntent;
     private BroadcastReceiver broadcastReceiver;
     private List<BeaconDevice> beacons;
+    private TextView distance, address;
     private static final String TAG = "CurrentLocationActivity";
     private static final int REQUEST_CODE_FOR_PERMISSIONS = 100;
 
@@ -55,6 +59,8 @@ public class CurrentLocationActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         this.navigationView.setCheckedItem(R.id.nav_current_location);
+        this.distance = findViewById(R.id.beacon_distance);
+        this.address = findViewById(R.id.beacon_address);
 
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
@@ -74,11 +80,48 @@ public class CurrentLocationActivity extends AppCompatActivity
                     beacons = new ArrayList<>();
                 }
 
-                beacons.add(intent.getParcelableExtra(BackgroundScanService.EXTRA_DEVICE));
+                BeaconDevice device = intent.getParcelableExtra(BackgroundScanService.EXTRA_DEVICE);
+                List<BeaconDevice> filteredBeacons = beacons.stream()
+                        .filter(beacon -> beacon.getAddress().equals(Objects.requireNonNull(device).getAddress())).collect(Collectors.toList());
+
+                if (filteredBeacons.size() != 0)
+                {
+                    beacons.remove(filteredBeacons.get(0));
+                }
+
+                beacons.add(device);
+                displayClosestBeacon();
             }
         };
 
         startService(serviceIntent);
+    }
+
+    private void displayClosestBeacon()
+    {
+        if (beacons == null || beacons.size() == 0)
+        {
+            return;
+        }
+
+        BeaconDevice device = beacons.get(0);
+
+        for (BeaconDevice beacon: beacons)
+        {
+            double leftVal = calculateAccuracy(device.getTxPower(), device.getRssi());
+            double rightVal = calculateAccuracy(beacon.getTxPower(), beacon.getRssi());
+
+            Log.d(TAG, "displayClosestBeacon: LEFT VAL :" + leftVal + " -> " + device.getAddress());
+            Log.d(TAG, "displayClosestBeacon: RIGHT VAL :" + rightVal + " -> " + beacon.getAddress());
+
+            if (leftVal > rightVal )
+            {
+                device = beacon;
+            }
+        }
+
+        this.distance.setText(String.valueOf(calculateAccuracy(device.getTxPower(), device.getRssi())));
+        this.address.setText(device.getAddress());
     }
 
     private void checkPermissions()
@@ -172,5 +215,23 @@ public class CurrentLocationActivity extends AppCompatActivity
     {
         stopService(serviceIntent);
         super.onBackPressed();
+    }
+
+    protected static double calculateAccuracy(int txPower, double rssi)
+    {
+        if (rssi == 0)
+        {
+            return -1.0;
+        }
+
+        double ratio = rssi * 1.0 / txPower;
+        if (ratio < 1.0)
+        {
+            return Math.pow(ratio, 10);
+        }
+        else
+        {
+            return (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
+        }
     }
 }
