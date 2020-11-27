@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.navidoc.R;
+
 import java.util.List;
 
 public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapter.ViewHolder>
 {
-    private List<Place> places;
-    private OnPlaceListener onPlaceListener;
+    private final List<Place> places;
+    private final OnPlaceListener onPlaceListener;
     private static final String TAG = "PlaceRecycleAdapter";
 
     public PlaceRecycleAdapter(List<Place> places, OnPlaceListener onPlaceListener)
@@ -65,16 +67,12 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
         return this.places.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private TextView titleView;
-        private TextView subtitleView;
-        private OnPlaceListener onPlaceListener;
-        private ConstraintLayout mainLayout;
-        private ConstraintLayout navigateLayout;
-        private ImageButton favouriteButton;
-        private ImageButton infoButton;
-        private ImageButton navigateButton;
+        private final TextView titleView;
+        private final TextView subtitleView;
+        private final OnPlaceListener onPlaceListener;
+        private final ImageButton favouriteButton;
 
         public ViewHolder(@NonNull View itemView, OnPlaceListener onPlaceListener)
         {
@@ -83,11 +81,11 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
             this.titleView = itemView.findViewById(R.id.title_item);
             this.subtitleView = itemView.findViewById(R.id.subtitle_item);
             this.onPlaceListener = onPlaceListener;
-            this.navigateLayout = itemView.findViewById(R.id.item_navigate_layout);
-            this.mainLayout = itemView.findViewById(R.id.item_main_layout);
+            ConstraintLayout navigateLayout = itemView.findViewById(R.id.item_navigate_layout);
+            ConstraintLayout mainLayout = itemView.findViewById(R.id.item_main_layout);
             this.favouriteButton = itemView.findViewById(R.id.item_favourite);
-            this.infoButton = itemView.findViewById(R.id.item_info);
-            this.navigateButton = itemView.findViewById(R.id.navigate_item);
+            ImageButton infoButton = itemView.findViewById(R.id.item_info);
+            ImageButton navigateButton = itemView.findViewById(R.id.navigate_item);
 
             mainLayout.setOnClickListener(this);
             navigateLayout.setOnClickListener(this);
@@ -112,7 +110,7 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
                     break;
                 case R.id.item_navigate_layout:
                 case R.id.navigate_item:
-                case R.id.appCompatImageButton:
+                case R.id.navigate:
                     onPlaceListener.onNavigateClick(getAdapterPosition());
                     break;
                 case R.id.item_favourite:

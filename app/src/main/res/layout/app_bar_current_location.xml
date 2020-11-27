@@ -14,7 +14,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <include layout="@layout/content_detail" />
+    <include layout="@layout/content_current_location" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

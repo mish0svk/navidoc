@@ -1,22 +1,23 @@
-package com.example.navidoc;
+package com.example.navidoc.utils;
 
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.navidoc.R;
 
 public class MessageToast
 {
     public static Toast makeToast(AppCompatActivity context, String text, int length)
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.toast_layout, (ViewGroup) context.findViewById(R.id.toast_layout_root));
-        TextView textView = (TextView) layout.findViewById(R.id.toast);
+        View layout = inflater.inflate(R.layout.toast_layout, context.findViewById(R.id.toast_layout_root));
+        TextView textView = layout.findViewById(R.id.toast);
         textView.setText(text);
 
         Toast toast = new Toast(context);
