@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 import android.os.Parcel;
 import android.os.Parcelable;

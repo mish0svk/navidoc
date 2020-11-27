@@ -1,4 +1,4 @@
-package com.example.navidoc.Databse;
+package com.example.navidoc.database;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

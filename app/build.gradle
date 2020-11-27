@@ -26,10 +26,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude 'main/AndroidManifest.xml'
+    }
 }
 
 dependencies {
-
+    //default android libraries
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.17.1'
@@ -38,10 +42,13 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+
+    //junit for testing libraries
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //room libraries to work with database
     def lifecycle_version ="1.1.1"
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     annotationProcessor  "android.arch.lifecycle:compiler:$lifecycle_version"
@@ -50,8 +57,15 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     annotationProcessor  "android.arch.persistence.room:compiler:$room_version"
     androidTestImplementation  "android.arch.persistence.room:testing:$room_version"
+
+    //kontakt.io library to work with beacons and ble
+    implementation 'com.kontaktio:sdk:4.0.3'
+
+    //refresh library
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 }
 
+//sceneform plugin
 apply plugin: 'com.google.ar.sceneform.plugin'
 sceneform.asset('sampledata/model.obj', // The “Source Asset Path” you specified during import
         'default', // The “Material Path” you specified during import

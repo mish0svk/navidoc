@@ -1,8 +1,9 @@
-package com.example.navidoc.Databse;
+package com.example.navidoc.database;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+@SuppressWarnings("unused")
 @Entity
 public class History {
 

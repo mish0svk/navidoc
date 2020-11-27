@@ -1,4 +1,4 @@
-package com.example.navidoc;
+package com.example.navidoc.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,10 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.navidoc.Databse.DAO;
-import com.example.navidoc.Databse.DatabaseHelper;
-import com.example.navidoc.Databse.Department;
-import com.example.navidoc.Databse.Doctor;
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
+import com.example.navidoc.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
 
 public class PlaceSearchAdapter extends ArrayAdapter<Place>
 {
-    private Context context;
-    private List<Place> places;
+    private final Context context;
+    private final List<Place> places;
     private final int LIMIT;
 
     public PlaceSearchAdapter(@NonNull Context context, @NonNull List<Place> places)
@@ -45,7 +46,7 @@ public class PlaceSearchAdapter extends ArrayAdapter<Place>
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
     {
-        @SuppressLint("ViewHolder")
+        @SuppressLint({"ViewHolder", "InflateParams"})
         View view = LayoutInflater.from(context).inflate(R.layout.autocomplete_search_place_layout, null);
         Place place = places.get(position);
         TextView doctorsName = view.findViewById(R.id.doctors_name);
@@ -65,11 +66,11 @@ public class PlaceSearchAdapter extends ArrayAdapter<Place>
         return new PlaceFilter(this, context);
     }
 
-    private class PlaceFilter extends Filter
+    private static class PlaceFilter extends Filter
     {
-        private PlaceSearchAdapter placeSearchAdapter;
+        private final PlaceSearchAdapter placeSearchAdapter;
         public List<Place> filteredPlaces;
-        private Context context;
+        private final Context context;
 
 
         public PlaceFilter(PlaceSearchAdapter placeSearchAdapter, Context context)
@@ -117,13 +118,17 @@ public class PlaceSearchAdapter extends ArrayAdapter<Place>
             return filterResults;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results)
         {
             this.placeSearchAdapter.places.clear();
-            if (results.values == null){
-                placeSearchAdapter.places.addAll(new ArrayList<Place>());
-            }else {
+            if (results.values == null)
+            {
+                placeSearchAdapter.places.addAll(new ArrayList<>());
+            }
+            else
+            {
                 placeSearchAdapter.places.addAll((List<Place>) results.values);
             }
             placeSearchAdapter.notifyDataSetChanged();

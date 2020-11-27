@@ -37,4 +37,19 @@
     <string name="rem_from_fav">Removed from favourite</string>
     <string name="tap_to_navigate">Tap to navigate</string>
     <string name="my_places">My places</string>
+    <string name="scan_bttn">Scan for devices</string>
+    <string name="foreground_scan_description">Scanning activity</string>
+    <string name="start_scanning_service">start scanning</string>
+    <string name="stop_scanning_service">stop scanning</string>
+    <string name="distance">Distance</string>
+    <string name="address">Address</string>
+    <string name="unique_id">Unique ID</string>
+    <string name="uknown_id">Unknown id</string>
+    <string name="no_beacons_close">There is no beacons close to your phone.\nSearching for others</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="navigate_to">Do you want launch navigation to </string>
+    <string name="go_to_places">Go to places</string>
+    <string name="button_no_clicked">Button \'No\' was clicked</string>
+    <string name="venue_name">Venue name</string>
 </resources>

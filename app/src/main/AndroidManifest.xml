@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.navidoc">
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <!-- Required only if your app isn't using the Device Companion Manager. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NaviDoc">
+        android:theme="@style/Theme.NaviDoc"
+        tools:ignore="AllowBackup">
 
         <activity
             android:name=".MainActivity"
@@ -25,22 +38,35 @@
         </activity>
 
         <activity
-            android:name=".PlacesActivity"
+            android:name=".activities.PlacesActivity"
             android:label="@string/places_activity">
         </activity>
 
         <activity
-            android:name=".DetailActivity"
+            android:name=".activities.DetailActivity"
             android:label="@string/detail_activity">
         </activity>
 
-        <activity android:name=".MyPlacesActivity"
+        <activity
+            android:name=".activities.CurrentLocationActivity"
+            android:label="@string/menu_current_location">
+        </activity>
+
+        <activity android:name=".activities.MyPlacesActivity"
             android:label="@string/my_places"/>
 
-        <activity android:name=".HistoryActivity"
+        <activity android:name=".activities.HistoryActivity"
             android:label="history"/>
 
         <meta-data android:name="com.google.ar.core"  android:value="required" />
+
+        <service
+            android:name="com.kontakt.sdk.android.ble.service.ProximityService"
+            android:exported="false"/>
+
+        <service
+            android:name=".services.BackgroundScanService"
+            android:exported="false"/>
 
     </application>
 
