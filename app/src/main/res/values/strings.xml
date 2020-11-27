@@ -51,4 +51,5 @@
     <string name="navigate_to">Do you want launch navigation to </string>
     <string name="go_to_places">Go to places</string>
     <string name="button_no_clicked">Button \'No\' was clicked</string>
+    <string name="venue_name">Venue name</string>
 </resources>
