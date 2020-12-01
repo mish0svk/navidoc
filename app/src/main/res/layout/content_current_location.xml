@@ -15,28 +15,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.AppCompatImageView
+
+            android:id="@+id/appCompatImageView3"
+            android:layout_width="159dp"
+            android:layout_height="155dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/no_beacons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.436" />
+
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Looking for devices"
-            android:visibility="invisible"
-            android:textSize="22sp"
             android:textColor="@color/primary_black_DM"
+            android:textSize="22sp"
             android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/no_beacons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
-            app:layout_constraintVertical_bias="0.739"
-            />
+            app:layout_constraintVertical_bias="0.739" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@color/secondary_darkergrey_DM"
             android:text="Please wait a second or two for the discovery service to start."
             android:textAlignment="center"
+            android:textColor="@color/secondary_darkergrey_DM"
+            android:textSize="18sp"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,11 +61,12 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="159dp"
             android:layout_height="155dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/no_beacons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,64 +101,106 @@
             android:id="@+id/appCompatImageView"
             android:layout_width="159dp"
             android:layout_height="155dp"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/no_beacons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/beacon_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.402" />
+            android:background="@drawable/ic_nav_skuska"
+            android:backgroundTint="@color/primary_orange_button_LM"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/unique_id"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/unique_id"
-            android:visibility="invisible"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/beacon_distance"
-            app:layout_constraintVertical_bias="0.222" />
+            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3"
+            app:layout_constraintVertical_bias="0.129"
+            android:visibility="visible">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/beacon_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/address"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.464"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/unique_id"
-            app:layout_constraintVertical_bias="0.134"
-            android:visibility="invisible"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/distance"
+                android:textColor="@color/primary_black_DM"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                 />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/venue_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/venue_name"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/beacon_address"
-            app:layout_constraintVertical_bias="0.165"
-            android:visibility="invisible"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/beacon_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_for_editext"
+                android:text="Tu je distance"
+                android:textColor="@color/secondary_darkergrey_DM"
+                android:textSize="18sp"
+                android:paddingTop="10dp"
+               />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unique_id"
+                android:textColor="@color/primary_black_DM"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/unique_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="id nove"
+                android:background="@drawable/shape_for_editext"
+                android:paddingTop="10dp"
+                android:textColor="@color/secondary_darkergrey_DM"
+                android:textSize="18sp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address"
+                android:textColor="@color/primary_black_DM"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingTop="10dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/beacon_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="adresa nova"
+                android:background="@drawable/shape_for_editext"
+                android:paddingTop="10dp"
+                android:textColor="@color/secondary_darkergrey_DM"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/venue_name"
+                android:textColor="@color/primary_black_DM"
+                android:textSize="16sp"
+                android:paddingTop="10dp"
+                android:textStyle="bold"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/venue_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="enue_name"
+                android:background="@drawable/shape_for_editext"
+                android:paddingTop="10dp"
+                android:textColor="@color/secondary_darkergrey_DM"
+                android:textSize="18sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
