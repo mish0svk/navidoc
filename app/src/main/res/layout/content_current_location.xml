@@ -16,43 +16,107 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Looking for devices"
+            android:visibility="invisible"
+            android:textSize="22sp"
+            android:textColor="@color/primary_black_DM"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/no_beacons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+            app:layout_constraintVertical_bias="0.739"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/secondary_darkergrey_DM"
+            android:text="Please wait a second or two for the discovery service to start."
+            android:textAlignment="center"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.499" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="159dp"
+            android:layout_height="155dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/no_beacons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bluetooth is Off."
+            android:visibility="invisible"
+            android:textSize="22sp"
+            android:textColor="@color/primary_black_DM"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/no_beacons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+            app:layout_constraintVertical_bias="0.739"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/no_beacons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_beacons_close"
+            android:textSize="18sp"
+            android:textColor="@color/secondary_darkergrey_DM"
+            android:text="Bluetooth is currently off.\n Please turn it on to start scanning for Kontakt.io devices."
+            android:textAlignment="center"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.164"
-            android:visibility="visible"/>
+            app:layout_constraintVertical_bias="0.499" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="159dp"
+            android:layout_height="155dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/no_beacons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/beacon_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/distance"
+            android:text=""
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.481"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.393"
-            android:visibility="invisible"/>
+            app:layout_constraintVertical_bias="0.402" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/unique_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/unique_id"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/beacon_distance"
-            app:layout_constraintVertical_bias="0.098"
-            android:visibility="invisible"/>
+            app:layout_constraintVertical_bias="0.222" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/beacon_address"
