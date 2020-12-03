@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="25dp"
-            app:srcCompat="@drawable/ic_arrow"/>
+            android:backgroundTint="@color/primary_blue_LM"
+            app:srcCompat="@drawable/ic_filter" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

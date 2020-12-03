@@ -52,8 +52,8 @@
     <string name="go_to_places">Go to places</string>
     <string name="button_no_clicked">Button \'No\' was clicked</string>
     <string name="venue_name">Venue name</string>
-    <style name="bluetooth_is_off">Bluetooth is Off</style>
-    <style name="sentence_bluetooth">Bluetooth is currently off. Please turn it on to start scanning for Kontakt.io devices</style>
-    <style name="loading_device">Looking for devices</style>
-    <style name="sentece_loading">Please wait a second or two for the discovery service to start</style>
+    <string name="bluetooth_is_off">Bluetooth is Off</string>
+    <string name="sentence_bluetooth">Bluetooth is currently off. Please turn it on to start scanning for Kontakt.io devices</string>
+    <string name="loading_device">Looking for devices</string>
+    <string name="sentece_loading">Please wait a second or two for the discovery service to start</string>
 </resources>
