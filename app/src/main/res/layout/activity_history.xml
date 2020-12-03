@@ -8,6 +8,20 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="25dp"
+        app:srcCompat="@drawable/ic_filter"
+        android:backgroundTint="@color/primary_blue_LM"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <include
         layout="@layout/app_bar_history"
         android:layout_width="match_parent"
@@ -19,7 +33,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:itemIconSize="50dp"
+        app:itemIconSize="60dp"
         app:itemTextColor="@color/secondary_black_LM"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

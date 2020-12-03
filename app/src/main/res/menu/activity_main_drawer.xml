@@ -35,7 +35,7 @@
                     app:itemTextColor="@color/secondary_black_LM"/>
                 <item
                     android:id="@+id/nav_history"
-                    android:icon="@drawable/ic_map"
+                    android:icon="@drawable/ic_his"
                     android:title="History"
                     app:itemTextColor="@color/secondary_black_LM"/>
 

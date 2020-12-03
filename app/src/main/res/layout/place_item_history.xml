@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+
+        <androidx.appcompat.widget.AppCompatCheckedTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="27.11.2020"
+            android:textColor="@color/secondary_darkgrey_DM"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+        </androidx.appcompat.widget.AppCompatCheckedTextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_main_layout"
+            android:layout_width="0dp"
+            android:layout_height="68dp"
+            android:layout_weight="3"
+            android:background="@drawable/shapeforplaces">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/item_info"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/ic_info"
+                android:backgroundTint="@color/primary_blue_LM"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.059"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/ambulance"
+                android:textColor="@color/primary_blue_LM"
+                android:textSize="22sp"
+                android:textStyle="bold|italic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.27"
+                app:layout_constraintStart_toEndOf="@+id/item_info"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.433" />
+
+            <TextView
+                android:id="@+id/subtitle_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/subtitle_item"
+                android:textAlignment="center"
+                android:textColor="@color/primary_orange_button_LM"
+                android:textSize="14sp"
+                android:textStyle="bold|italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.282"
+                app:layout_constraintStart_toEndOf="@+id/item_info"
+                app:layout_constraintTop_toBottomOf="@+id/title_item" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/item_favourite"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_star"
+                android:backgroundTint="@color/primary_orange_button_LM"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.942"
+                app:layout_constraintStart_toEndOf="@+id/title_item"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_navigate_layout"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/navigate_item"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_nav_skuska"
+                android:backgroundTint="@color/primary_blue_LM"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.49"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</LinearLayout>
