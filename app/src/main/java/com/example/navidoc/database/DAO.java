@@ -104,10 +104,7 @@ public interface DAO
     @Query("SELECT * FROM history WHERE History_ID = :id")
     History getHistoryById(int id);
 
-
     @Transaction
     @Query("SELECT * FROM history")
     List<DoctorsHistory> getDoctorsHistory();
-
-
 }
