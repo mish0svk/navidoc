@@ -80,6 +80,12 @@ public interface DAO
     @Query("SELECT * FROM doctor WHERE isFavorite = :favourite")
     List<Doctor> getDoctorsByFavourite(int favourite);
 
+    @Query("SELECT * FROM doctor WHERE history_id != 0 ORDER BY history_id DESC")
+    List<Doctor> getNewestDoctorsByHistory();
+
+    @Query("SELECT * FROM doctor WHERE history_id != 0 ORDER BY history_id ASC")
+    List<Doctor> getOldestDoctorsByHistory();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertHistory(History history);
 
@@ -103,7 +109,6 @@ public interface DAO
 
     @Query("SELECT * FROM history WHERE History_ID = :id")
     History getHistoryById(int id);
-
 
     @Transaction
     @Query("SELECT * FROM history")

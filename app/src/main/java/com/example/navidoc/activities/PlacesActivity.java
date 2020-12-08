@@ -69,6 +69,11 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
         {
             searchField.setText(getIntent().getStringExtra("searchInput"));
         }
+        else
+        {
+            //select contetnt when no content is set
+            searchField.setText(" ");
+        }
 
         if (drawer.isDrawerOpen(GravityCompat.START))
         {

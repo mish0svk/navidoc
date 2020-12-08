@@ -13,6 +13,7 @@
         >
 
         <androidx.appcompat.widget.AppCompatCheckedTextView
+            android:id="@+id/date_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="27.11.2020"
@@ -30,7 +31,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/item_main_layout"
+            android:id="@+id/item_history_layout"
             android:layout_width="0dp"
             android:layout_height="68dp"
             android:layout_weight="3"
