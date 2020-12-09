@@ -14,6 +14,7 @@ public class Place implements Parcelable
     private final String phoneNumber;
     private final String websiteUrl;
     private int favourite;
+    private String date;
 
     public Place(String ambulance, String department, int floor, String doctorsName, String startTime,
                  String endTime, String phoneNumber, String websiteUrl, int favourite)
@@ -27,6 +28,21 @@ public class Place implements Parcelable
         this.phoneNumber = phoneNumber;
         this.websiteUrl = websiteUrl;
         this.favourite = favourite;
+    }
+
+    public Place(String ambulance, String department, int floor, String doctorsName, String startTime,
+                 String endTime, String phoneNumber, String websiteUrl, int favourite, String date)
+    {
+        this.ambulance = ambulance;
+        this.department = department;
+        this.floor = floor;
+        this.doctorsName = doctorsName;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.phoneNumber = phoneNumber;
+        this.websiteUrl = websiteUrl;
+        this.favourite = favourite;
+        this.date = date;
     }
 
 
@@ -66,6 +82,14 @@ public class Place implements Parcelable
     public String getDepartment()
     {
         return department;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getFloor()
