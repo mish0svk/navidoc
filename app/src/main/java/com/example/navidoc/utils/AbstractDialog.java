@@ -128,7 +128,7 @@ public class AbstractDialog
     public void addNewHistory()
     {
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         String strDate = dateFormat.format(date);
         String[] arrSplit = strDate.split(" ");
         String time = arrSplit[1];

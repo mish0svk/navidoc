@@ -3,6 +3,7 @@ package com.example.navidoc.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.navidoc.adapters.HistoryRecycleAdapter;
 import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Department;
@@ -20,7 +22,7 @@ import com.example.navidoc.database.Doctor;
 import com.example.navidoc.R;
 import com.example.navidoc.adapters.OnPlaceListener;
 import com.example.navidoc.adapters.Place;
-import com.example.navidoc.adapters.PlaceRecycleAdapter;
+import com.example.navidoc.database.History;
 import com.example.navidoc.utils.AbstractDialog;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.utils.MessageToast;
@@ -33,10 +35,12 @@ import java.util.Objects;
 public class HistoryActivity extends AppCompatActivity implements OnPlaceListener
 {
     private RecyclerView listView;
-    private PlaceRecycleAdapter placeRecycleAdapter;
+    private HistoryRecycleAdapter historyRecycleAdapter;
     private final List<Place> places = new ArrayList<>();
     private DAO dao;
+    private ImageButton filterButton;
     private static final String TAG = "HistoryActivity";
+    private boolean filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,37 +54,62 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        this.filter = false;
         navigationView.setCheckedItem(R.id.nav_history);
         this.findAndCloseNavigation();
         this.listView = findViewById(R.id.scroll_list_places);
+        this.filterButton = findViewById(R.id.filter_item_button);
         DatabaseHelper db = DatabaseHelper.getInstance(this);
         dao = db.dao();
+        readDataFromDb(filter);
         renderScrollList();
-        readDataFromDb();
         MenuUtils menuUtils = new MenuUtils(this, R.id.nav_history);
         navigationView.setNavigationItemSelectedListener(menuUtils);
+        setButtonsListener();
+        this.filterButton.setBackgroundResource(R.drawable.ic_filter_down);
+    }
+
+    private void setButtonsListener() {
+        this.filterButton.setOnClickListener(listView -> setHistoryItemList());
+    }
+
+    private void setHistoryItemList() {
+        this.filter = !this.filter;
+
+        readDataFromDb(filter);
+        renderScrollList();
     }
 
 
+    private void readDataFromDb(boolean filter) {
 
-    private void readDataFromDb() {
-        List<Doctor> doctors = new ArrayList<>(dao.getAllDoctorsWithHistory());
+        List<Doctor> doctors;
+
+        if(!filter)
+        {
+            doctors = dao.getNewestDoctorsByHistory();
+            this.filterButton.setBackgroundResource(R.drawable.ic_filter_down);
+        }
+        else {
+            doctors = dao.getOldestDoctorsByHistory();
+            this.filterButton.setBackgroundResource(R.drawable.ic_filter_up);
+        }
+
         places.clear();
-
         doctors.forEach(doctor -> {
             Department department = dao.getDepartmentByID(doctor.getDepartment_id());
-
+            History history = dao.getHistoryById(doctor.getHistory_id());
             places.add(new Place(doctor.getAmbulance_name(), department.getName(), department.getFloor(),
                     doctor.getName(), doctor.getStart_time(), doctor.getEnd_time(),
-                    doctor.getPhone_number(), doctor.getWeb_site(), doctor.getIsFavorite()));
+                    doctor.getPhone_number(), doctor.getWeb_site(), doctor.getIsFavorite(),history.getDate()));
         });
     }
 
     private void renderScrollList()
     {
-        this.placeRecycleAdapter = new PlaceRecycleAdapter(this.places, this);
+        this.historyRecycleAdapter = new HistoryRecycleAdapter(this.places, this);
         this.listView = findViewById(R.id.scroll_list_places);
-        this.listView.setAdapter(placeRecycleAdapter);
+        this.listView.setAdapter(historyRecycleAdapter);
         this.listView.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -135,7 +164,7 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
         }
 
         touchedPlace.setFavourite(favourite);
-        placeRecycleAdapter.notifyItemChanged(position);
+        historyRecycleAdapter.notifyItemChanged(position);
     }
 
     public void createNavigateDialog(int position)
