@@ -22,7 +22,6 @@ import com.example.navidoc.database.Doctor;
 import com.example.navidoc.R;
 import com.example.navidoc.adapters.OnPlaceListener;
 import com.example.navidoc.adapters.Place;
-import com.example.navidoc.adapters.PlaceRecycleAdapter;
 import com.example.navidoc.database.History;
 import com.example.navidoc.utils.AbstractDialog;
 import com.example.navidoc.utils.MenuUtils;
@@ -75,32 +74,25 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
     }
 
     private void setHistoryItemList() {
-        if(this.filter)
-        {
-            this.filter = false;
-        }
-        else
-            this.filter = true;
+        this.filter = !this.filter;
 
         readDataFromDb(filter);
-        renderScrollList();;
+        renderScrollList();
     }
 
 
     private void readDataFromDb(boolean filter) {
 
-        List<Doctor> doctors = new ArrayList<>();
+        List<Doctor> doctors;
 
         if(!filter)
         {
             doctors = dao.getNewestDoctorsByHistory();
             this.filterButton.setBackgroundResource(R.drawable.ic_filter_down);
-            //filterButton.setSaveEnabled(false);
         }
         else {
             doctors = dao.getOldestDoctorsByHistory();
             this.filterButton.setBackgroundResource(R.drawable.ic_filter_up);
-            //filterButton.setSaveEnabled(true);
         }
 
         places.clear();
