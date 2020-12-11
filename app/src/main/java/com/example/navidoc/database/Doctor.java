@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 @Entity
 public class Doctor
 {
@@ -21,8 +22,9 @@ public class Doctor
     int isFavorite;
     int department_id;
     int history_id;
+    String beacon_unique_id;
 
-    public Doctor(String name, String ambulance_name, String phone_number, String email, int door_number, String web_site, String start_time, String end_time, int isFavorite, int department_id, int history_id) {
+    public Doctor(String name, String ambulance_name, String phone_number, String email, int door_number, String web_site, String start_time, String end_time, int isFavorite, int department_id, int history_id, String beacon_unique_id) {
         this.name = name;
         this.ambulance_name = ambulance_name;
         this.phone_number = phone_number;
@@ -34,6 +36,7 @@ public class Doctor
         this.isFavorite = isFavorite;
         this.department_id = department_id;
         this.history_id = history_id;
+        this.beacon_unique_id = beacon_unique_id;
     }
 
     public void setDoctor_ID(int doctor_ID)
@@ -104,6 +107,16 @@ public class Doctor
 
     public void setHistory_id(int history_id) {
         this.history_id = history_id;
+    }
+
+    public String getBeacon_unique_id()
+    {
+        return beacon_unique_id;
+    }
+
+    public void setBeacon_unique_id(String beacon_unique_id)
+    {
+        this.beacon_unique_id = beacon_unique_id;
     }
 
     @Override

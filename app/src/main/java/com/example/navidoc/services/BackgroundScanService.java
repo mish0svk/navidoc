@@ -58,7 +58,7 @@ public class BackgroundScanService extends Service
             @Override
             public void onIBeaconDiscovered(IBeaconDevice ibeacon, IBeaconRegion region)
             {
-                onDeviceDiscovered(ibeacon);
+               onDeviceLost(ibeacon);
             }
 
             @Override
@@ -117,6 +117,7 @@ public class BackgroundScanService extends Service
     {
         Intent intent = new Intent();
         intent.setAction(DEVICE_LOST);
+        intent.putExtra(EXTRA_DEVICE, device);
         sendBroadcast(intent);
     }
 }

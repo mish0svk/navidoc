@@ -21,6 +21,10 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.R;
 import com.example.navidoc.services.BackgroundScanService;
@@ -46,6 +50,7 @@ public class CurrentLocationActivity extends AppCompatActivity
     private Map<String, String> beaconUniqueIds;
     private LinearLayoutCompat linearLayout;
     private boolean btOn = false;
+    private DAO dao;
 
     @SuppressLint("SimpleDateFormat")
     @Override
@@ -77,6 +82,8 @@ public class CurrentLocationActivity extends AppCompatActivity
         this.foundImage = findViewById(R.id.found_image);
         beacons = new ArrayList<>();
         setUniqueIds();
+        DatabaseHelper db = DatabaseHelper.getInstance(this);
+        dao = db.dao();
 
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
@@ -166,7 +173,6 @@ public class CurrentLocationActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                Log.d(TAG, "JEBE ");
                 if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction()))
                 {
                     onBluetoothAction(intent);
@@ -220,6 +226,7 @@ public class CurrentLocationActivity extends AppCompatActivity
         };
     }
 
+    @SuppressLint("DefaultLocale")
     private void displayClosestBeacon()
     {
         if (!btOn)
@@ -243,19 +250,32 @@ public class CurrentLocationActivity extends AppCompatActivity
             setBtOffVisibility(View.INVISIBLE);
             setFoundValuesVisibility(View.VISIBLE);
 
-            this.distance.setText(String.valueOf(calculateAccuracy(closestDevice.getRssi())));
+            String roundedValue = String.format("%.3f", calculateAccuracy(closestDevice.getRssi()));
+            this.distance.setText((roundedValue.startsWith("0")) ? roundedValue.substring(2, 4).concat(",").concat(String.valueOf(roundedValue.charAt(4)))
+                    .concat("  ").concat(getResources().getString(R.string.centimeters)) :
+                    (roundedValue.startsWith("1") ? roundedValue.concat("  ").concat(getResources().getString(R.string.meter)) :
+                            roundedValue.concat("  ").concat(getResources().getString(R.string.meters))));
+
             this.address.setText(closestDevice.getAddress());
             if (this.beaconUniqueIds.containsKey(closestDevice.getAddress()))
             {
                 this.uniqueId.setText(beaconUniqueIds.get(closestDevice.getAddress()));
+                Doctor doctor = dao.getDoctorByBeaconUniqueId(beaconUniqueIds.get(closestDevice.getAddress()));
+                if (doctor != null)
+                {
+                    Department department = dao.getDepartmentByID(doctor.getDepartment_id());
+                    venueName.setText(String.format("%s, %s", doctor.getName(), department.getName()));
+                }
+                else
+                {
+                    venueName.setText(R.string.doctor_not_available);
+                }
             }
             else
             {
                 this.uniqueId.setText(R.string.uknown_id);
+                venueName.setText(R.string.uknown_id);
             }
-
-            double res = Math.pow(10, (double) (-69 - closestDevice.getRssi()) / 20);
-            venueName.setText(String.valueOf(res));
         }
         else
         {
