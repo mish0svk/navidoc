@@ -33,7 +33,7 @@ public class DatabaseInitialInsert
         //Oftalmologia
         dao.insertDoctor(new Doctor("Adam Klein","Oko+","0908 456 456","Oko+@gmail.com",35,"www.Oko+.com","08:00","14:00",0, dao.getDepartmentIdByName("Oftalmologia"),0, null));
         dao.insertDoctor(new Doctor("Anna Jabconova","SuperOko","0908 300 500","SuperOko+@gmail.com",36,"www.SuperOko+.com","08:00","12:00",0, dao.getDepartmentIdByName("Oftalmologia"),0, null));
-        dao.insertDoctor(new Doctor("Samuel Binas","Ocna Ambulancia","0908 342 342","Binas@gmail.com",37,"www.Binas+.com","08:00","14:00",0, dao.getDepartmentIdByName("Oftalmologia"),0, null));
+        dao.insertDoctor(new Doctor("Samuel Binas","Ocna Ambulancia","0908 342 342","Binas@gmail.com",37,"www.Binas+.com","08:00","14:00",0, dao.getDepartmentIdByName("Oftalmologia"),0, "UuaJiX"));
 
         //Imunologia
         dao.insertDoctor(new Doctor("Jaroslav Nagy","Imuna+","0908 500 200","Imuna+@gmail.com",22,"www.Imuna+.com","06:00","14:00",0, dao.getDepartmentIdByName("Imunologia"),0, null));
@@ -49,7 +49,7 @@ public class DatabaseInitialInsert
         dao.insertDoctor(new Doctor("Klaudia Chroma","Geriatricka Ambulancia+","0908 312 789","GeriatrickaAmbulancia+@gmail.com",23,"www.Geriatricka mbulancia++.com","09:00","16:00",0, dao.getDepartmentIdByName("Geriatria"),0, null));
 
         //Onkologia
-        dao.insertDoctor(new Doctor("Vladimir Kralovic","Onkologia","0947 372 789","Onkologia+@gmail.com",42,"www.Onkologia+.com","08:00","13:00",0, dao.getDepartmentIdByName("Onkologia"),0, null));
+        dao.insertDoctor(new Doctor("Vladimir Kralovic","Onkologia","0947 372 789","Onkologia+@gmail.com",42,"www.Onkologia+.com","08:00","13:00",0, dao.getDepartmentIdByName("Onkologia"),0, "Uujp66"));
         dao.insertDoctor(new Doctor("Slavka Klimberova","Onkologia","0904 025 789","Onkologia+@gmail.com",43,"www.Onkologia+.com","10:00","17:00",0, dao.getDepartmentIdByName("Onkologia"),0, null));
 
         //Pediatria
@@ -60,7 +60,7 @@ public class DatabaseInitialInsert
         //Gynekologia
         dao.insertDoctor(new Doctor("Robert Kocner","Gynekologicka Ambulancia","0908 312 789","Kocner@gmail.com",32,"www.Kocner.com","05:00","12:00",0, dao.getDepartmentIdByName("Gynekologia"),0, null));
         dao.insertDoctor(new Doctor("Iveta Rovna","Gynekologicka Ambulancia","0908 312 789","Rovna@gmail.com",33,"www.Rovna.com","06:00","13:00",0, dao.getDepartmentIdByName("Gynekologia"),0, null));
-        dao.insertDoctor(new Doctor("Julius Bentner","Gynekologicka Ambulancia","0908 312 789","Bentner@gmail.com",34,"www.Bentner.com","07:00","14:00",0, dao.getDepartmentIdByName("Gynekologia"),0, null));
+        dao.insertDoctor(new Doctor("Julius Bentner","Gynekologicka Ambulancia","0908 312 789","Bentner@gmail.com",34,"www.Bentner.com","07:00","14:00",0, dao.getDepartmentIdByName("Gynekologia"),0, "UuGhGx"));
 
     }
 }

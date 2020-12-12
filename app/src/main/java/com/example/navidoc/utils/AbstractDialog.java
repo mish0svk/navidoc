@@ -6,6 +6,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.navidoc.R;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.database.DAO;
@@ -98,9 +100,9 @@ public class AbstractDialog
         return instance;
     }
 
-    public AbstractDialog setNegativeButton(Context context)
+    public AbstractDialog setNegativeButton(AppCompatActivity context)
     {
-        builder.setNegativeButton(R.string.no, (dialog, which) -> Toast.makeText(context, R.string.button_no_clicked, Toast.LENGTH_SHORT).show());
+        builder.setNegativeButton(R.string.no, (dialog, which) -> MessageToast.makeToast(context, R.string.button_no_clicked, Toast.LENGTH_SHORT).show());
 
         return instance;
     }
