@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".activities.PlacesActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="25dp"
+        android:backgroundTint="@color/primary_orange_button_LM"
+        app:srcCompat="@drawable/ic_filter"
+        app:tint="@null"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:tint="@color/primary_white_LM"/>
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"

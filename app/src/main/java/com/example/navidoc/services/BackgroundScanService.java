@@ -16,12 +16,15 @@ import com.kontakt.sdk.android.common.profile.IBeaconDevice;
 import com.kontakt.sdk.android.common.profile.IBeaconRegion;
 import com.kontakt.sdk.android.common.profile.RemoteBluetoothDevice;
 
+import java.util.List;
+
 public class BackgroundScanService extends Service
 {
     public static final String DEVICE_DISCOVERED = "DEVICE_DISCOVERED_ACTION";
     public static final String STOP_SERVICE = "STOP_SERVICE_ACTION";
     public static final String EXTRA_DEVICE = "DeviceExtra";
     public static final String EXTRA_DEVICE_COUNT = "DevicesCountExtra";
+    public static final String DEVICE_LOST = "DEVICE_LOST_ACTION";
 
     private ProximityManager proximityManager;
     private boolean isRunning;
@@ -47,9 +50,15 @@ public class BackgroundScanService extends Service
         this.proximityManager.setIBeaconListener(new SimpleIBeaconListener()
         {
             @Override
+            public void onIBeaconsUpdated(List<IBeaconDevice> ibeacons, IBeaconRegion region)
+            {
+              ibeacons.forEach(iBeaconDevice -> onDeviceDiscovered(iBeaconDevice));
+            }
+
+            @Override
             public void onIBeaconDiscovered(IBeaconDevice ibeacon, IBeaconRegion region)
             {
-                onDeviceDiscovered(ibeacon);
+               onDeviceDiscovered(ibeacon);
             }
 
             @Override
@@ -101,6 +110,14 @@ public class BackgroundScanService extends Service
         intent.setAction(DEVICE_DISCOVERED);
         intent.putExtra(EXTRA_DEVICE, device);
         intent.putExtra(EXTRA_DEVICE_COUNT, 0);
+        sendBroadcast(intent);
+    }
+
+    private void onDeviceLost(final  RemoteBluetoothDevice device)
+    {
+        Intent intent = new Intent();
+        intent.setAction(DEVICE_LOST);
+        intent.putExtra(EXTRA_DEVICE, device);
         sendBroadcast(intent);
     }
 }

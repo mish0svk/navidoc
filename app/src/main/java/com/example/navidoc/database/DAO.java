@@ -114,5 +114,6 @@ public interface DAO
     @Query("SELECT * FROM history")
     List<DoctorsHistory> getDoctorsHistory();
 
-
+    @Query("SELECT * FROM doctor WHERE beacon_unique_id = :uniqueId")
+    Doctor getDoctorByBeaconUniqueId(String uniqueId);
 }

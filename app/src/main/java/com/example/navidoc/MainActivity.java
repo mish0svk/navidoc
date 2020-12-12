@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            Toast.makeText(this, "Location permissions are mandatory to use BLE features on Android 6.0 or higher", Toast.LENGTH_LONG).show();
+            MessageToast.makeToast(this, "Location permissions are mandatory to use BLE features on Android 6.0 or higher", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

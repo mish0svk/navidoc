@@ -56,4 +56,8 @@
     <string name="sentence_bluetooth">Bluetooth is currently off. Please turn it on to start scanning for Kontakt.io devices</string>
     <string name="loading_device">Looking for devices</string>
     <string name="sentece_loading">Please wait a second or two for the discovery service to start</string>
+    <string name="doctor_not_available">Doctor is not available</string>
+    <string name="centimeters">centimeters</string>
+    <string name="meter">meter</string>
+    <string name="meters">meters</string>
 </resources>
