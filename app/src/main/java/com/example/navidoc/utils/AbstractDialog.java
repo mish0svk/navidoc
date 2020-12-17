@@ -3,12 +3,14 @@ package com.example.navidoc.utils;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.R;
+import com.example.navidoc.activities.ARCameraActivity;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
@@ -54,7 +56,7 @@ public class AbstractDialog
     {
         return builder;
     }
-
+    
     public AbstractDialog setTitle(int title)
     {
         builder.setTitle(title);
@@ -95,6 +97,9 @@ public class AbstractDialog
                 doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
                 dao.updatedDoctor(doctor);
             }
+
+            Intent intent = new Intent(builder.getContext(), ARCameraActivity.class);
+            builder.getContext().startActivity(intent);
         });
 
         return instance;
