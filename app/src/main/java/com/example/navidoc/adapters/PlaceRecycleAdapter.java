@@ -33,7 +33,7 @@ public class PlaceRecycleAdapter extends RecyclerView.Adapter<PlaceRecycleAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.place_item_history, parent, false);
+        View view = layoutInflater.inflate(R.layout.place_item, parent, false);
 
         return new ViewHolder(view, this.onPlaceListener);
     }
