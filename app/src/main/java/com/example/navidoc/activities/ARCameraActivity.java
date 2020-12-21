@@ -13,14 +13,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.R;
+import com.example.navidoc.utils.ArrowDirections;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+
+import java.util.Vector;
 
 public class ARCameraActivity extends AppCompatActivity {
     private static final String TAG = ARCameraActivity.class.getSimpleName();
@@ -62,6 +67,14 @@ public class ARCameraActivity extends AppCompatActivity {
     private void addNodeToScene(ArFragment arFragment, Anchor anchor, Renderable renderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
         TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
+        // PRE VAS : TODO :
+        // - nastavovanie vektoru sipky
+        // - vektor(0,1,0) - tvar sipky
+        // - 180 - smer sipky(uhol "nase ENUM")
+        //node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
+        ArrowDirections arrowDirections = new ArrowDirections(ArrowDirections.VectorDirection.BACK);
+        Vector3 vector3 = new Vector3(arrowDirections);
+        node.setLocalRotation(Quaternion.axisAngle(vector3, arrowDirections.getAngle()));
         node.setRenderable(renderable);
         node.setParent(anchorNode);
         arFragment.getArSceneView().getScene().addChild(anchorNode);
