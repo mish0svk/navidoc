@@ -126,6 +126,8 @@ public class AbstractDialog
                 dao.updatedDoctor(doctor1);
             }
 
+            Intent intent = new Intent(builder.getContext(), ARCameraActivity.class);
+            builder.getContext().startActivity(intent);
         });
 
         return instance;
