@@ -58,6 +58,9 @@
         <activity android:name=".activities.HistoryActivity"
             android:label="History"/>
 
+        <activity android:name=".activities.ARCameraActivity"
+            android:label="AR"/>
+
         <meta-data android:name="com.google.ar.core"  android:value="required" />
 
         <service
