@@ -66,6 +66,8 @@ public class ARCameraActivity extends AppCompatActivity
             path.setHops(hops);
         }
 
+        System.out.println("dasd");
+        System.out.println("dsad");
     }
 
     private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {

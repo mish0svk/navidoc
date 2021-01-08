@@ -1,5 +1,6 @@
 package com.example.navidoc.activities;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,10 +24,14 @@ import com.example.navidoc.R;
 import com.example.navidoc.adapters.OnPlaceListener;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.database.History;
+import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.AbstractDialog;
+import com.example.navidoc.utils.BeaconUtility;
+import com.example.navidoc.utils.Locator;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.utils.MessageToast;
 import com.google.android.material.navigation.NavigationView;
+import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +46,7 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
     private ImageButton filterButton;
     private static final String TAG = "HistoryActivity";
     private boolean filter;
+    private Locator locator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,20 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
         navigationView.setNavigationItemSelectedListener(menuUtils);
         setButtonsListener();
         this.filterButton.setBackgroundResource(R.drawable.ic_filter_down);
+
+        Intent serviceIntent = BackgroundScanService.createIntent(this);
+        locator = new Locator(this, serviceIntent);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
+        {
+            MessageToast.makeToast(this, R.string.bluetooth_is_off, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            locator.startService();
+        }
+
+        locator.registerReceiver(BluetoothAdapter.ACTION_STATE_CHANGED);
     }
 
     private void setButtonsListener() {
@@ -169,12 +189,43 @@ public class HistoryActivity extends AppCompatActivity implements OnPlaceListene
 
     public void createNavigateDialog(int position)
     {
+        BeaconDevice beacon = locator.displayClosestBeacon();
+        if (beacon == null || BeaconUtility.getUniqueId(beacon) == null)
+        {
+            MessageToast.makeToast(this, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Place touchedPlace = places.get(position);
         String navigateTo = getResources().getString(R.string.navigate_to) + touchedPlace.getAmbulance()
                 +"("+ touchedPlace.getDoctorsName() + ")";
 
         AbstractDialog dialog = AbstractDialog.getInstance();
         dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
-                .sePositiveButton(touchedPlace).setNegativeButton(this).getBuilder().create().show();
+                .sePositiveButton(BeaconUtility.getUniqueId(beacon), touchedPlace).setNegativeButton(this).getBuilder().create().show();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        locator.stopService();
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        if (locator != null)
+        {
+            locator.registerReceiver(BackgroundScanService.DEVICE_DISCOVERED);
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        locator.unregisterReceiver();
+        super.onPause();
     }
 }

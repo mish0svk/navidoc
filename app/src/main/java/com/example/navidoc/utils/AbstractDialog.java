@@ -88,7 +88,7 @@ public class AbstractDialog
         return instance;
     }
 
-    public AbstractDialog sePositiveButton(Place place)
+    public AbstractDialog sePositiveButton(String currentLocation, Place place)
     {
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             addNewHistory();
@@ -106,7 +106,14 @@ public class AbstractDialog
                 {
                     doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
                     dao.updatedDoctor(doctor);
-                    intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                    Path path = getShortestPath(dao.getNodeByUniqueId(currentLocation), doctor.getName());
+                    if (path != null)
+                    {
+                        intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                        intent.putExtra("path", path);
+                        intent.putExtra("list", (Serializable) path.getHops());
+                    }
+
                 }
             }
 

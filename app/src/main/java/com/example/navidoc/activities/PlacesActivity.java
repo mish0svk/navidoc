@@ -264,6 +264,6 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
 
         AbstractDialog dialog = AbstractDialog.getInstance();
         dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
-                .sePositiveButton(touchedPlace).setNegativeButton(this).getBuilder().create().show();
+                .sePositiveButton(BeaconUtility.getUniqueId(beacon), touchedPlace).setNegativeButton(this).getBuilder().create().show();
     }
 }
