@@ -11,11 +11,23 @@ public class Node
     int id;
     String uniqueId;
     boolean active;
+    int nodeNumber;
 
-    public Node(String uniqueId, boolean active)
+    public Node(String uniqueId, boolean active, int nodeNumber)
     {
         this.uniqueId = uniqueId;
         this.active = active;
+        this.nodeNumber = nodeNumber;
+    }
+
+    public int getNodeNumber()
+    {
+        return nodeNumber;
+    }
+
+    public void setNodeNumber(int nodeNumber)
+    {
+        this.nodeNumber = nodeNumber;
     }
 
     public int getId()

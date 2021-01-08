@@ -134,5 +134,25 @@ public interface DAO
 
     @Transaction
     @Query("SELECT * FROM node WHERE uniqueId = :uniqueId")
-    NodeWithNeighborNodes getNodeWithNeighborsByMac(String uniqueId);
+    NodeWithNeighborNodes getNodeWithNeighborsByUniqueId(String uniqueId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNeighborNode(NeighborNode node);
+
+    @Update
+    void updateNeighborNode(NeighborNode node);
+
+    @Delete
+    void deleteNeighborNode(NeighborNode node);
+
+    @Query("DELETE FROM neighbornode")
+    void deleteAllNeighborNodes();
+
+    @Transaction
+    @Query("SELECT * FROM node")
+    List<NodeWithNeighborNodes> getNodesWithNeighbors();
+
+    @Transaction
+    @Query("SELECT * FROM neighbornode WHERE nodeId = :nodeId")
+    List<NeighborNode> getNeighborNodesByNodeId(int nodeId);
 }

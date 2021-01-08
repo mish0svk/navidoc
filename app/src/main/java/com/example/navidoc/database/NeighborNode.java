@@ -12,12 +12,34 @@ public class NeighborNode
     String uniqueId;
     int distance;
     boolean active;
+    int nodeId;
+    int nodeNumber;
 
-    public NeighborNode(String uniqueId, int distance, boolean active)
+    public NeighborNode(String uniqueId, int distance, boolean active, int nodeId, int nodeNumber)
     {
         this.uniqueId = uniqueId;
         this.distance = distance;
         this.active = active;
+        this.nodeId = nodeId;
+        this.nodeNumber = nodeNumber;
+    }
+
+    public int getNodeNumber() {
+        return nodeNumber;
+    }
+
+    public void setNodeNumber(int nodeNumber) {
+        this.nodeNumber = nodeNumber;
+    }
+
+    public int getNodeId()
+    {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId)
+    {
+        this.nodeId = nodeId;
     }
 
     public int getNeighborId()
