@@ -1,7 +1,6 @@
 package com.example.navidoc.utils;
 
 import com.example.navidoc.database.DAO;
-import com.example.navidoc.database.NeighborNode;
 import com.example.navidoc.database.Node;
 import com.example.navidoc.database.NodeWithNeighborNodes;
 
@@ -38,7 +37,7 @@ public class Dijkstra
                 nodes.add(tmp);
             }
         });
-        for (NodeWithNeighborNodes node: allNodes)
+        for (NodeWithNeighborNodes node : allNodes)
         {
             NodeGraph nodeGraph = nodes.get(getIndex(node.node));
             dao.getNeighborNodesByNodeId(node.node.getId()).forEach(neighborNode ->
@@ -56,7 +55,7 @@ public class Dijkstra
     private int getIndex(Node node)
     {
         int idx = 0;
-        for (NodeGraph nodeGraph: nodes)
+        for (NodeGraph nodeGraph : nodes)
         {
             if (nodeGraph.getName().equals(node.getUniqueId()))
             {
@@ -75,14 +74,16 @@ public class Dijkstra
         Set<NodeGraph> unSettledNodes = new HashSet<>();
 
         unSettledNodes.add(source);
-        while (unSettledNodes.size() != 0) {
+        while (unSettledNodes.size() != 0)
+        {
             NodeGraph currentNode = getLowestDistanceNode(unSettledNodes);
             unSettledNodes.remove(currentNode);
-            for (Map.Entry<NodeGraph, Integer> adjacencyPair: currentNode.getAdjacentNodes().entrySet())
+            for (Map.Entry<NodeGraph, Integer> adjacencyPair : currentNode.getAdjacentNodes().entrySet())
             {
                 NodeGraph adjacentNode = adjacencyPair.getKey();
                 Integer edgeWeight = adjacencyPair.getValue();
-                if (!settledNodes.contains(adjacentNode)) {
+                if (!settledNodes.contains(adjacentNode))
+                {
                     calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
                     unSettledNodes.add(adjacentNode);
                 }
@@ -95,7 +96,8 @@ public class Dijkstra
     private void calculateMinimumDistance(NodeGraph evaluationNode, Integer edgeWeigh, NodeGraph sourceNode)
     {
         Integer sourceDistance = sourceNode.getDistance();
-        if (sourceDistance + edgeWeigh < evaluationNode.getDistance()) {
+        if (sourceDistance + edgeWeigh < evaluationNode.getDistance())
+        {
             evaluationNode.setDistance(sourceDistance + edgeWeigh);
             LinkedList<NodeGraph> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
             shortestPath.add(sourceNode);
@@ -107,9 +109,11 @@ public class Dijkstra
     {
         NodeGraph lowestDistanceNode = null;
         int lowestDistance = Integer.MAX_VALUE;
-        for (NodeGraph node: unsettledNodes) {
+        for (NodeGraph node : unsettledNodes)
+        {
             int nodeDistance = node.getDistance();
-            if (nodeDistance < lowestDistance) {
+            if (nodeDistance < lowestDistance)
+            {
                 lowestDistance = nodeDistance;
                 lowestDistanceNode = node;
             }

@@ -60,4 +60,5 @@
     <string name="centimeters">centimeters</string>
     <string name="meter">meter</string>
     <string name="meters">meters</string>
+    <string name="unavailable_location">This location is current not available</string>
 </resources>

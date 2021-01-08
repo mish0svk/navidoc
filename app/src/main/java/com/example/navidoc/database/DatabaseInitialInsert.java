@@ -68,7 +68,7 @@ public class DatabaseInitialInsert
         dao.insertNode(new Node("UutvWt", true,1));
         dao.insertNode(new Node("Uujp66", true,2));
         dao.insertNode(new Node("UuGhGx", true,3));
-        dao.insertNode(new Node("UuaJix", true,4));
+        dao.insertNode(new Node("UuaJiX", true,4));
 
         //inserting neighbors
         //inserting neighbors to node UuehLL
@@ -83,14 +83,14 @@ public class DatabaseInitialInsert
         //inserting neighbors to node Uujp66
         dao.insertNeighborNode(new NeighborNode("UuehLL", 4, true, dao.getNodeByUniqueId("Uujp66").getId(), 0));
         dao.insertNeighborNode(new NeighborNode("UutvWt", 1, true, dao.getNodeByUniqueId("Uujp66").getId(), 1));
-        dao.insertNeighborNode(new NeighborNode("UuaJix", 2, true, dao.getNodeByUniqueId("Uujp66").getId(), 4));
+        dao.insertNeighborNode(new NeighborNode("UuaJiX", 2, true, dao.getNodeByUniqueId("Uujp66").getId(), 4));
 
         //inserting neighbors to node UuGhGx
         dao.insertNeighborNode(new NeighborNode("UutvWt", 3, true, dao.getNodeByUniqueId("UuGhGx").getId(), 1));
-        dao.insertNeighborNode(new NeighborNode("UuaJix", 3, true, dao.getNodeByUniqueId("UuGhGx").getId(), 4));
+        dao.insertNeighborNode(new NeighborNode("UuaJiX", 3, true, dao.getNodeByUniqueId("UuGhGx").getId(), 4));
 
-        //inserting neighbors to node UuaJix
-        dao.insertNeighborNode(new NeighborNode("Uujp66", 2, true, dao.getNodeByUniqueId("UuaJix").getId(), 2));
-        dao.insertNeighborNode(new NeighborNode("UuGhGx", 3, true, dao.getNodeByUniqueId("UuaJix").getId(), 3));
+        //inserting neighbors to node UuaJiX
+        dao.insertNeighborNode(new NeighborNode("Uujp66", 2, true, dao.getNodeByUniqueId("UuaJiX").getId(), 2));
+        dao.insertNeighborNode(new NeighborNode("UuGhGx", 3, true, dao.getNodeByUniqueId("UuaJiX").getId(), 3));
     }
 }

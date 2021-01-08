@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.R;
 import com.example.navidoc.utils.ArrowDirections;
+import com.example.navidoc.utils.Hop;
+import com.example.navidoc.utils.Path;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -25,14 +27,18 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.Objects;
 
-public class ARCameraActivity extends AppCompatActivity {
+public class ARCameraActivity extends AppCompatActivity
+{
     private static final String TAG = ARCameraActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
+    private Path path;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +55,17 @@ public class ARCameraActivity extends AppCompatActivity {
                     Anchor anchor = hitResult.createAnchor();
                     placeObject(arFragment, anchor, Uri.parse("model.sfb"));
                 });
+
+        if (getIntent().hasExtra("path") && getIntent().getParcelableExtra("path") != null)
+        {
+            this.path = getIntent().getParcelableExtra("path");
+        }
+        if (getIntent().hasExtra("list") && getIntent().getSerializableExtra("list") != null)
+        {
+            List<Hop> hops = (List<Hop>) getIntent().getSerializableExtra("list");
+            path.setHops(hops);
+        }
+
     }
 
     private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {
