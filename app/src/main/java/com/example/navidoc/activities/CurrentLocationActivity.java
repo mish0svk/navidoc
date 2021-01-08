@@ -239,8 +239,8 @@ public class CurrentLocationActivity extends AppCompatActivity
             BeaconDevice closestDevice = beacons.get(0);
             for (BeaconDevice beacon: beacons)
             {
-                double leftVal = calculateAccuracy(closestDevice.getRssi());
-                double rightVal = calculateAccuracy(beacon.getRssi());
+                double leftVal =  closestDevice.getDistance();
+                double rightVal = beacon.getDistance();
                 if (leftVal > rightVal)
                 {
                     closestDevice = beacon;
@@ -250,7 +250,7 @@ public class CurrentLocationActivity extends AppCompatActivity
             setBtOffVisibility(View.INVISIBLE);
             setFoundValuesVisibility(View.VISIBLE);
 
-            String roundedValue = String.format("%.3f", calculateAccuracy(closestDevice.getRssi()));
+            String roundedValue = String.format("%.3f", closestDevice.getDistance());
             this.distance.setText((roundedValue.startsWith("0")) ? roundedValue.substring(2, 4).concat(",").concat(String.valueOf(roundedValue.charAt(4)))
                     .concat("  ").concat(getResources().getString(R.string.centimeters)) :
                     (roundedValue.startsWith("1") ? roundedValue.concat("  ").concat(getResources().getString(R.string.meter)) :
