@@ -1,11 +1,17 @@
 package com.example.navidoc.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
@@ -13,8 +19,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.R;
+import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.ArrowDirections;
+import com.example.navidoc.utils.BeaconUtility;
 import com.example.navidoc.utils.Hop;
+import com.example.navidoc.utils.MessageToast;
 import com.example.navidoc.utils.Path;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -26,9 +35,11 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ARCameraActivity extends AppCompatActivity
 {
@@ -37,6 +48,11 @@ public class ARCameraActivity extends AppCompatActivity
 
     private ArFragment arFragment;
     private Path path;
+    private List<BeaconDevice> beacons;
+    private Intent serviceIntent;
+    private BroadcastReceiver broadcastReceiver;
+    private boolean btOn;
+    private static final int POST_DELAY_TIME = 5000;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -65,9 +81,21 @@ public class ARCameraActivity extends AppCompatActivity
             List<Hop> hops = (List<Hop>) getIntent().getSerializableExtra("list");
             path.setHops(hops);
         }
+        this.serviceIntent = BackgroundScanService.createIntent(this);
+        beacons = new ArrayList<>();
+        btOn = true;
+        setUpBroadcastReceiver();
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
+        {
+            MessageToast.makeToast(this, R.string.bluetooth_is_off, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            startService(serviceIntent);
+        }
 
-        System.out.println("dasd");
-        System.out.println("dsad");
+        registerReceiver(broadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
     private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {
@@ -120,5 +148,139 @@ public class ARCameraActivity extends AppCompatActivity
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        stopService(serviceIntent);
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        IntentFilter intentFilter = new IntentFilter(BackgroundScanService.DEVICE_DISCOVERED);
+        registerReceiver(broadcastReceiver, intentFilter);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
+
+    private void setUpBroadcastReceiver()
+    {
+        this.broadcastReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction()))
+                {
+                    onBluetoothAction(intent);
+
+                    return;
+                }
+
+                BeaconDevice device = intent.getParcelableExtra(BackgroundScanService.EXTRA_DEVICE);
+                if (device == null)
+                {
+                    return;
+                }
+
+                removeDevice(device.getAddress());
+
+                if (intent.getAction().equals(BackgroundScanService.DEVICE_DISCOVERED))
+                {
+                    beacons.add(device);
+                }
+
+                handleNextHop();
+            }
+
+            private void onBluetoothAction(Intent intent)
+            {
+                if(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_TURNING_OFF)
+                {
+                    stopService(serviceIntent);
+                    btOn = false;
+                }
+                else
+                {
+                    startService(serviceIntent);
+                    btOn = true;
+                }
+            }
+
+            private void removeDevice(String address)
+            {
+                if (beacons.stream().anyMatch(beacon -> beacon.getAddress().equals(address)))
+                {
+                    BeaconDevice beaconDevice = beacons.stream().filter(beacon -> beacon.getAddress().equals(address)).collect(Collectors.toList()).get(0);
+                    beacons.remove(beaconDevice);
+                }
+            }
+        };
+    }
+
+    @SuppressLint("DefaultLocale")
+    private BeaconDevice displayClosestBeacon()
+    {
+        if (!btOn)
+        {
+            return null;
+        }
+
+        if (beacons.size() != 0)
+        {
+            BeaconDevice closestDevice = beacons.get(0);
+            for (BeaconDevice beacon : beacons)
+            {
+                double leftVal = closestDevice.getDistance();
+                double rightVal = beacon.getDistance();
+                if (leftVal > rightVal)
+                {
+                    closestDevice = beacon;
+                }
+            }
+
+            return closestDevice;
+        }
+
+        return null;
+    }
+
+    private void handleNextHop()
+    {
+        BeaconDevice beacon = displayClosestBeacon();
+        if (beacon != null && BeaconUtility.getUniqueId(beacon).equals(path.getCurrentHop().getDestinationUniqueId())
+                && beacon.getDistance() < 0.7)
+        {
+            if (path.isFinalHop())
+            {
+                MessageToast.makeToast(this, R.string.final_dest, Toast.LENGTH_LONG).show();
+                stopService(serviceIntent);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(this::finish, POST_DELAY_TIME);
+            }
+            else
+            {
+                MessageToast.makeToast(this, R.string.new_hop, Toast.LENGTH_SHORT).show();
+                path.nextHop();
+                try
+                {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

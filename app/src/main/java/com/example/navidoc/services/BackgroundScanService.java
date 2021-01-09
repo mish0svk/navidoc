@@ -64,7 +64,7 @@ public class BackgroundScanService extends Service
             @Override
             public void onIBeaconLost(IBeaconDevice ibeacon, IBeaconRegion region)
             {
-                super.onIBeaconLost(ibeacon, region);
+                onDeviceLost(ibeacon);
             }
         });
     }

@@ -69,4 +69,14 @@ public class Path implements Parcelable
     {
         dest.writeInt(currentHopIdx);
     }
+
+    public Hop getCurrentHop()
+    {
+        return this.hops.get(currentHopIdx);
+    }
+
+    public void nextHop()
+    {
+        this.currentHopIdx++;
+    }
 }
