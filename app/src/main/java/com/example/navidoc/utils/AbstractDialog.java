@@ -2,7 +2,6 @@ package com.example.navidoc.utils;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +29,7 @@ public class AbstractDialog
     private static final String TAG = "TAG";
     private static AbstractDialog instance;
     private DAO dao;
+    private AppCompatActivity context;
 
     private AlertDialog.Builder builder;
 
@@ -43,11 +43,12 @@ public class AbstractDialog
         return instance;
     }
 
-    public AbstractDialog newBuilderInstance(Context context)
+    public AbstractDialog newBuilderInstance(AppCompatActivity context)
     {
         builder = new AlertDialog.Builder(context);
         DatabaseHelper db = DatabaseHelper.getInstance(context);
         dao = db.dao();
+        this.context = context;
 
         return instance;
     }
@@ -85,21 +86,38 @@ public class AbstractDialog
         return instance;
     }
 
-    public AbstractDialog sePositiveButton(Place place)
+    public AbstractDialog sePositiveButton(String currentLocation, Place place)
     {
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             addNewHistory();
 
             List<Doctor> tmp = dao.getDoctorsByName(place.getDoctorsName());
+            Intent intent = null;
             if (Objects.requireNonNull(tmp).size() > 0)
             {
                 Doctor doctor = tmp.get(0);
-                doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
-                dao.updatedDoctor(doctor);
+                if (doctor.getBeacon_unique_id()  == null || doctor.getBeacon_unique_id().isEmpty())
+                {
+                    MessageToast.makeToast(this.context, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+                }
+                else if (doctor.getBeacon_unique_id().equals(currentLocation))
+                {
+                    MessageToast.makeToast(this.context, R.string.already_here, Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
+                    dao.updatedDoctor(doctor);
+                    intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                    intent.putExtra("source", currentLocation);
+                    intent.putExtra("destination", doctor.getName());
+                }
             }
 
-            Intent intent = new Intent(builder.getContext(), ARCameraActivity.class);
-            builder.getContext().startActivity(intent);
+            if (intent != null)
+            {
+                builder.getContext().startActivity(intent);
+            }
         });
 
         return instance;
@@ -112,22 +130,39 @@ public class AbstractDialog
         return instance;
     }
 
-    public AbstractDialog setPositiveButtonForMain(List<Doctor> doctors)
+    public AbstractDialog setPositiveButtonForMain(String currentLocation, String destination, List<Doctor> doctors)
     {
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-            // Do something when user clicked the Yes button
-            // Set the TextView visibility GONE
+        builder.setPositiveButton(R.string.yes, (dialog, which) ->
+        {
             addNewHistory();
 
+            Intent intent = null;
             if (Objects.requireNonNull(doctors).size() > 0)
             {
-                Doctor doctor1 = doctors.get(0);
-                doctor1.setHistory_id(dao.getLastHistory().getHistory_ID());
-                dao.updatedDoctor(doctor1);
+                Doctor doctor = doctors.get(0);
+                if (doctor.getBeacon_unique_id()  == null || doctor.getBeacon_unique_id().isEmpty())
+                {
+                    MessageToast.makeToast(this.context, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+                }
+                else if (doctor.getBeacon_unique_id().equals(currentLocation))
+                {
+                    MessageToast.makeToast(this.context, R.string.already_here, Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
+                    dao.updatedDoctor(doctor);
+                    intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                    intent.putExtra("source", currentLocation);
+                    intent.putExtra("destination", destination);
+                }
             }
 
-            Intent intent = new Intent(builder.getContext(), ARCameraActivity.class);
-            builder.getContext().startActivity(intent);
+            if (intent != null)
+            {
+                builder.getContext().startActivity(intent);
+            }
+
         });
 
         return instance;

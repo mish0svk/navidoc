@@ -1,5 +1,6 @@
 package com.example.navidoc.activities;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +21,10 @@ import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Department;
 import com.example.navidoc.database.Doctor;
+import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.AbstractDialog;
+import com.example.navidoc.utils.BeaconUtility;
+import com.example.navidoc.utils.Locator;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.utils.MessageToast;
 import com.example.navidoc.adapters.OnPlaceListener;
@@ -29,6 +33,7 @@ import com.example.navidoc.adapters.PlaceRecycleAdapter;
 import com.example.navidoc.adapters.PlaceSearchAdapter;
 import com.example.navidoc.R;
 import com.google.android.material.navigation.NavigationView;
+import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +49,7 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
     private AutoCompleteTextView searchField;
     private DAO dao;
     private ImageButton submitSearch;
+    private Locator locator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -63,7 +69,6 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
         searchField = findViewById(R.id.search_field);
         submitSearch = findViewById(R.id.submit_search);
 
-        //noinspection ConstantConditions
         if (getIntent().hasExtra("searchInput") && getIntent().getStringExtra("searchInput") != null
                 && !getIntent().getStringExtra("searchInput").isEmpty())
         {
@@ -94,6 +99,20 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
         {
             readDataFromDb(searchField.getText().toString());
         }
+
+        Intent serviceIntent = BackgroundScanService.createIntent(this);
+        locator = new Locator(this, serviceIntent);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
+        {
+            MessageToast.makeToast(this, R.string.bluetooth_is_off, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            locator.startService();
+        }
+
+        locator.registerReceiver(BluetoothAdapter.ACTION_STATE_CHANGED);
     }
 
     private void setSubmitSearchListener()
@@ -155,12 +174,30 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
     @Override
     public void onBackPressed()
     {
+        locator.stopService();
         DrawerLayout layout = findViewById(R.id.drawer_layout);
         if (layout.isDrawerOpen(GravityCompat.START)) {
             layout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        if (locator != null)
+        {
+            locator.registerReceiver(BackgroundScanService.DEVICE_DISCOVERED);
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        locator.unregisterReceiver();
+        super.onPause();
     }
 
     @Override
@@ -213,12 +250,19 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
 
     public void createNavigateDialog(int position)
     {
+        BeaconDevice beacon = locator.displayClosestBeacon();
+        if (beacon == null || BeaconUtility.getUniqueId(beacon) == null)
+        {
+            MessageToast.makeToast(this, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Place touchedPlace = places.get(position);
         String navigateTo = getResources().getString(R.string.navigate_to) + touchedPlace.getAmbulance()
                 +"("+ touchedPlace.getDoctorsName() + ")";
 
         AbstractDialog dialog = AbstractDialog.getInstance();
         dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
-                .sePositiveButton(touchedPlace).setNegativeButton(this).getBuilder().create().show();
+                .sePositiveButton(BeaconUtility.getUniqueId(beacon), touchedPlace).setNegativeButton(this).getBuilder().create().show();
     }
 }

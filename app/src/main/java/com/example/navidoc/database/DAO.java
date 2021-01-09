@@ -116,4 +116,43 @@ public interface DAO
 
     @Query("SELECT * FROM doctor WHERE beacon_unique_id = :uniqueId")
     Doctor getDoctorByBeaconUniqueId(String uniqueId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNode(Node node);
+
+    @Update
+    void updateNode(Node node);
+
+    @Delete
+    void deleteNode(Node node);
+
+    @Query("DELETE FROM node")
+    void deleteAllNodes();
+
+    @Query("SELECT * FROM node WHERE uniqueId = :uniqueId")
+    Node getNodeByUniqueId(String uniqueId);
+
+    @Transaction
+    @Query("SELECT * FROM node WHERE uniqueId = :uniqueId")
+    NodeWithNeighborNodes getNodeWithNeighborsByUniqueId(String uniqueId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNeighborNode(NeighborNode node);
+
+    @Update
+    void updateNeighborNode(NeighborNode node);
+
+    @Delete
+    void deleteNeighborNode(NeighborNode node);
+
+    @Query("DELETE FROM neighbornode")
+    void deleteAllNeighborNodes();
+
+    @Transaction
+    @Query("SELECT * FROM node")
+    List<NodeWithNeighborNodes> getNodesWithNeighbors();
+
+    @Transaction
+    @Query("SELECT * FROM neighbornode WHERE nodeId = :nodeId")
+    List<NeighborNode> getNeighborNodesByNodeId(int nodeId);
 }

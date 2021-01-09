@@ -2,6 +2,8 @@ package com.example.navidoc;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,11 +20,15 @@ import com.example.navidoc.database.Doctor;
 import com.example.navidoc.activities.PlacesActivity;
 import com.example.navidoc.adapters.Place;
 import com.example.navidoc.adapters.PlaceSearchAdapter;
+import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.AbstractDialog;
+import com.example.navidoc.utils.BeaconUtility;
+import com.example.navidoc.utils.Locator;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.utils.MessageToast;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton submitSearch;
     private DAO dao;
     private static final String TAG = "MainActivity";
+    private Locator locator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +80,23 @@ public class MainActivity extends AppCompatActivity
         setSubmitSearchButtonListener();
         searchRelevantData();
         checkPermissions();
+
+        Intent serviceIntent = BackgroundScanService.createIntent(this);
+        locator = new Locator(this, serviceIntent);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
+        {
+            MessageToast.makeToast(this, R.string.bluetooth_is_off, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            locator.startService();
+        }
+
+        locator.registerReceiver(BluetoothAdapter.ACTION_STATE_CHANGED);
     }
+
+
 
     private void searchRelevantData()
     {
@@ -87,6 +110,13 @@ public class MainActivity extends AppCompatActivity
     public void createNavigateDialog()
     {
         String searchInput = searchField.getText().toString();
+        BeaconDevice beacon = locator.displayClosestBeacon();
+        if (beacon == null || BeaconUtility.getUniqueId(beacon) == null)
+        {
+            MessageToast.makeToast(this, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         List<Doctor> tmp = dao.getDoctorsByName(searchInput);
         Doctor doctor = tmp.get(0);
         String navigateTo = getResources().getString(R.string.navigate_to)+ doctor.getAmbulance_name()
@@ -94,11 +124,8 @@ public class MainActivity extends AppCompatActivity
 
         AbstractDialog dialog = AbstractDialog.getInstance();
         dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
-                .setPositiveButtonForMain(tmp).setNegativeButton(this).getBuilder()
-                .setNeutralButton(R.string.go_to_places, (dialog1, which) -> {
-                    // Do something when No button clicked
-                    startPlacesActivityWithQuery();
-                  }).create().show();
+                .setPositiveButtonForMain(BeaconUtility.getUniqueId(beacon), searchInput, tmp).setNegativeButton(this).getBuilder()
+                .setNeutralButton(R.string.go_to_places, this::onClick).create().show();
     }
 
     private void setSubmitSearchButtonListener()
@@ -114,8 +141,10 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void setMainSearchButtonListener() {
-        this.searchButton.setOnClickListener(view -> {
+    private void setMainSearchButtonListener()
+    {
+        this.searchButton.setOnClickListener(view ->
+        {
             if (this.searchLayout.getVisibility() == View.VISIBLE && !searchField.getText().toString().isEmpty())
             {
                 Snackbar.make(view, R.string.toastik, Snackbar.LENGTH_SHORT).show();
@@ -134,6 +163,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
+        locator.stopService();
         boolean sideActivity = findAndCloseNavigation();
 
         if (this.searchLayout.getVisibility() == View.VISIBLE)
@@ -146,6 +176,23 @@ public class MainActivity extends AppCompatActivity
         {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        if (locator != null)
+        {
+            locator.registerReceiver(BackgroundScanService.DEVICE_DISCOVERED);
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        locator.unregisterReceiver();
+        super.onPause();
     }
 
     private boolean findAndCloseNavigation()
@@ -208,5 +255,10 @@ public class MainActivity extends AppCompatActivity
             MessageToast.makeToast(this, "Location permissions are mandatory to use BLE features on Android 6.0 or higher", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MainActivity.class));
         }
+    }
+
+    private void onClick(DialogInterface dialog1, int which)
+    {
+        startPlacesActivityWithQuery();
     }
 }
