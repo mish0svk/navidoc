@@ -62,5 +62,35 @@ public class DatabaseInitialInsert
         dao.insertDoctor(new Doctor("Iveta Rovna","Gynekologicka Ambulancia","0908 312 789","Rovna@gmail.com",33,"www.Rovna.com","06:00","13:00",0, dao.getDepartmentIdByName("Gynekologia"),0, null));
         dao.insertDoctor(new Doctor("Julius Bentner","Gynekologicka Ambulancia","0908 312 789","Bentner@gmail.com",34,"www.Bentner.com","07:00","14:00",0, dao.getDepartmentIdByName("Gynekologia"),0, "UuGhGx"));
 
+
+        //inserting nodes
+        dao.insertNode(new Node("UuehLL", true, 0));
+        dao.insertNode(new Node("UutvWt", true,1));
+        dao.insertNode(new Node("Uujp66", true,2));
+        dao.insertNode(new Node("UuGhGx", true,3));
+        dao.insertNode(new Node("UuaJiX", true,4));
+
+        //inserting neighbors
+        //inserting neighbors to node UuehLL
+        dao.insertNeighborNode(new NeighborNode("UutvWt", 2, true, dao.getNodeByUniqueId("UuehLL").getId(), 1));
+        dao.insertNeighborNode(new NeighborNode("Uujp66", 4, true, dao.getNodeByUniqueId("UuehLL").getId(), 2));
+
+        //inserting neighbors to node UutvWt
+        dao.insertNeighborNode(new NeighborNode("UuehLL", 2, true, dao.getNodeByUniqueId("UutvWt").getId(), 0));
+        dao.insertNeighborNode(new NeighborNode("Uujp66", 1, true, dao.getNodeByUniqueId("UutvWt").getId(), 2));
+        dao.insertNeighborNode(new NeighborNode("UuGhGx", 3, true, dao.getNodeByUniqueId("UutvWt").getId(), 3));
+
+        //inserting neighbors to node Uujp66
+        dao.insertNeighborNode(new NeighborNode("UuehLL", 4, true, dao.getNodeByUniqueId("Uujp66").getId(), 0));
+        dao.insertNeighborNode(new NeighborNode("UutvWt", 1, true, dao.getNodeByUniqueId("Uujp66").getId(), 1));
+        dao.insertNeighborNode(new NeighborNode("UuaJiX", 2, true, dao.getNodeByUniqueId("Uujp66").getId(), 4));
+
+        //inserting neighbors to node UuGhGx
+        dao.insertNeighborNode(new NeighborNode("UutvWt", 3, true, dao.getNodeByUniqueId("UuGhGx").getId(), 1));
+        dao.insertNeighborNode(new NeighborNode("UuaJiX", 3, true, dao.getNodeByUniqueId("UuGhGx").getId(), 4));
+
+        //inserting neighbors to node UuaJiX
+        dao.insertNeighborNode(new NeighborNode("Uujp66", 2, true, dao.getNodeByUniqueId("UuaJiX").getId(), 2));
+        dao.insertNeighborNode(new NeighborNode("UuGhGx", 3, true, dao.getNodeByUniqueId("UuaJiX").getId(), 3));
     }
 }

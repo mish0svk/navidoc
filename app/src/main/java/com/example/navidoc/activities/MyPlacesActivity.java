@@ -1,5 +1,6 @@
 package com.example.navidoc.activities;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +18,10 @@ import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Department;
 import com.example.navidoc.database.Doctor;
+import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.AbstractDialog;
+import com.example.navidoc.utils.BeaconUtility;
+import com.example.navidoc.utils.Locator;
 import com.example.navidoc.utils.MenuUtils;
 import com.example.navidoc.utils.MessageToast;
 import com.example.navidoc.adapters.OnPlaceListener;
@@ -25,6 +29,7 @@ import com.example.navidoc.adapters.Place;
 import com.example.navidoc.adapters.PlaceRecycleAdapter;
 import com.example.navidoc.R;
 import com.google.android.material.navigation.NavigationView;
+import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +42,7 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
     private final List<Place> places = new ArrayList<>();
     private DAO dao;
     private static final String TAG = "MyPlacesActivity";
+    private Locator locator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,20 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
         readDataFromDb();
         MenuUtils menuUtils = new MenuUtils(this, R.id.nav_my_places);
         navigationView.setNavigationItemSelectedListener(menuUtils);
+
+        Intent serviceIntent = BackgroundScanService.createIntent(this);
+        locator = new Locator(this, serviceIntent);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
+        {
+            MessageToast.makeToast(this, R.string.bluetooth_is_off, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            locator.startService();
+        }
+
+        locator.registerReceiver(BluetoothAdapter.ACTION_STATE_CHANGED);
     }
 
     private void readDataFromDb()
@@ -151,12 +171,43 @@ public class MyPlacesActivity extends AppCompatActivity implements OnPlaceListen
 
     public void createNavigateDialog(int position)
     {
+        BeaconDevice beacon = locator.displayClosestBeacon();
+        if (beacon == null || BeaconUtility.getUniqueId(beacon) == null)
+        {
+            MessageToast.makeToast(this, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Place touchedPlace = places.get(position);
         AbstractDialog dialog = AbstractDialog.getInstance();
         String navigateTo = getResources().getString(R.string.navigate_to) + touchedPlace.getAmbulance()
                 +"("+ touchedPlace.getDoctorsName() + ")";
 
         dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
-                .sePositiveButton(touchedPlace).setNegativeButton(this).getBuilder().create().show();
+                .sePositiveButton(BeaconUtility.getUniqueId(beacon), touchedPlace).setNegativeButton(this).getBuilder().create().show();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        locator.stopService();
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        if (locator != null)
+        {
+            locator.registerReceiver(BackgroundScanService.DEVICE_DISCOVERED);
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        locator.unregisterReceiver();
+        super.onPause();
     }
 }
