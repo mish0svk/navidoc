@@ -32,9 +32,13 @@ import com.example.navidoc.utils.MessageToast;
 import com.example.navidoc.utils.NodeGraph;
 import com.example.navidoc.utils.Path;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Pose;
+import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -44,6 +48,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import com.kontakt.sdk.android.ble.device.BeaconDevice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +58,7 @@ public class ARCameraActivity extends AppCompatActivity
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
+    private boolean isArrowPlaced = false;
     private Path path;
     private List<BeaconDevice> beacons;
     private Intent serviceIntent;
@@ -75,11 +81,16 @@ public class ARCameraActivity extends AppCompatActivity
         setContentView(R.layout.activity_a_r_camera);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
-        arFragment.setOnTapArPlaneListener(
+        arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdate);
+
+        // necham to zakomentovane pre istotu, ak by sa nieco podrbalo :D
+        // listener vytvara sipku po tuknuti na plane
+        /*arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
                     Anchor anchor = hitResult.createAnchor();
                     placeObject(arFragment, anchor, Uri.parse("model.sfb"));
-                });
+                });*/
+
 
         if (getIntent().hasExtra("source") && getIntent().getStringExtra("source") != null
                 && getIntent().hasExtra("destination") && getIntent().getStringExtra("destination") != null)
@@ -105,6 +116,25 @@ public class ARCameraActivity extends AppCompatActivity
         registerReceiver(broadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
+    private void onUpdate(FrameTime frameTime) {
+        if (isArrowPlaced)
+            return;
+
+        Frame frame = arFragment.getArSceneView().getArFrame();
+        Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
+
+        for (Plane plane : planes) {
+            if (plane.getTrackingState() == TrackingState.TRACKING) {
+                Anchor anchor = plane.createAnchor(plane.getCenterPose()); // sipka sa vytvori v strede plane
+                //float[] currentTranslation = anchor.getPose().getTranslation(); // zistenie x,y,z pozicie sipky v priestore
+                //Anchor customAnchor = plane.createAnchor(Pose.makeTranslation(-1.5705881f, -0.8903943f, -1.7675675f)); // sipka sa vytvori na danych x,y,z suradniciach
+                placeObject(arFragment, anchor, Uri.parse("model.sfb"));
+            }
+        }
+    }
+
+
+
     private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {
         ModelRenderable.builder()
                 .setSource(arFragment.getContext(), uri)
@@ -116,6 +146,8 @@ public class ARCameraActivity extends AppCompatActivity
                         }
 
                 );
+
+        isArrowPlaced = true;
     }
 
     private void addNodeToScene(ArFragment arFragment, Anchor anchor, Renderable renderable) {
