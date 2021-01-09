@@ -15,9 +15,7 @@ import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Doctor;
 import com.example.navidoc.database.History;
-import com.example.navidoc.database.Node;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -102,18 +100,17 @@ public class AbstractDialog
                 {
                     MessageToast.makeToast(this.context, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
                 }
+                else if (doctor.getBeacon_unique_id().equals(currentLocation))
+                {
+                    MessageToast.makeToast(this.context, R.string.already_here, Toast.LENGTH_SHORT).show();
+                }
                 else
                 {
                     doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
                     dao.updatedDoctor(doctor);
-                    Path path = getShortestPath(dao.getNodeByUniqueId(currentLocation), doctor.getName());
-                    if (path != null)
-                    {
-                        intent = new Intent(builder.getContext(), ARCameraActivity.class);
-                        intent.putExtra("path", path);
-                        intent.putExtra("list", (Serializable) path.getHops());
-                    }
-
+                    intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                    intent.putExtra("source", currentLocation);
+                    intent.putExtra("destination", doctor.getName());
                 }
             }
 
@@ -147,18 +144,17 @@ public class AbstractDialog
                 {
                     MessageToast.makeToast(this.context, R.string.unavailable_location, Toast.LENGTH_SHORT).show();
                 }
+                else if (doctor.getBeacon_unique_id().equals(currentLocation))
+                {
+                    MessageToast.makeToast(this.context, R.string.already_here, Toast.LENGTH_SHORT).show();
+                }
                 else
                 {
                     doctor.setHistory_id(dao.getLastHistory().getHistory_ID());
                     dao.updatedDoctor(doctor);
-                    Path path = getShortestPath(dao.getNodeByUniqueId(currentLocation), destination);
-                    if (path != null)
-                    {
-                        intent = new Intent(builder.getContext(), ARCameraActivity.class);
-                        intent.putExtra("path", path);
-                        intent.putExtra("list", (Serializable) path.getHops());
-                    }
-
+                    intent = new Intent(builder.getContext(), ARCameraActivity.class);
+                    intent.putExtra("source", currentLocation);
+                    intent.putExtra("destination", destination);
                 }
             }
 
@@ -170,44 +166,6 @@ public class AbstractDialog
         });
 
         return instance;
-    }
-
-    private Path getShortestPath(Node currentLocation, String destination)
-    {
-        Node destinationLocation = dao.getNodeByUniqueId(destination);
-        Dijkstra dijkstra = new Dijkstra(dao, currentLocation);
-        Graph graph = dijkstra.calculateShortestPathFromSource();
-        String destinationUniqueId = dao.getDoctorsByName(destination).get(0).getBeacon_unique_id();
-
-        NodeGraph node = null;
-        for (NodeGraph nodeGraph: graph.getNodes())
-        {
-            if (nodeGraph.getName().equals(destinationUniqueId))
-            {
-                node = nodeGraph;
-            }
-        }
-
-        if (node != null)
-        {
-
-            int distance = 0;
-            for (NodeGraph nodeGraph: node.getShortestPath())
-            {
-                distance += nodeGraph.getDistance();
-            }
-
-            NodeGraph tmp = new NodeGraph(destinationUniqueId);
-            tmp.setDistance(node.getDistance() - distance);
-            node.getShortestPath().add(tmp);
-
-            return new Path(node);
-        }
-        else
-        {
-            MessageToast.makeToast(context, "something went wrong", Toast.LENGTH_SHORT).show();
-            return null;
-        }
     }
 
     @SuppressLint("SimpleDateFormat")

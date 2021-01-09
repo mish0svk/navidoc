@@ -63,4 +63,5 @@
     <string name="unavailable_location">This location is current not available</string>
     <string name="u_have_reached_dest">You have reached your destination</string>
     <string name="new_hop">New hop</string>
+    <string name="already_here">Already at the location</string>
 </resources>

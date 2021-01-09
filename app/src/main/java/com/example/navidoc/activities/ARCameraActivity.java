@@ -18,12 +18,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.navidoc.MainActivity;
 import com.example.navidoc.R;
+import com.example.navidoc.database.DAO;
+import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Node;
 import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.ArrowDirections;
 import com.example.navidoc.utils.BeaconUtility;
-import com.example.navidoc.utils.Hop;
+import com.example.navidoc.utils.Dijkstra;
+import com.example.navidoc.utils.Graph;
 import com.example.navidoc.utils.MessageToast;
+import com.example.navidoc.utils.NodeGraph;
 import com.example.navidoc.utils.Path;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -53,11 +59,14 @@ public class ARCameraActivity extends AppCompatActivity
     private BroadcastReceiver broadcastReceiver;
     private boolean btOn;
     private static final int POST_DELAY_TIME = 5000;
+    private DAO dao;
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DatabaseHelper db2 = DatabaseHelper.getInstance(this);
+        dao = db2.dao();
 
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
@@ -72,15 +81,13 @@ public class ARCameraActivity extends AppCompatActivity
                     placeObject(arFragment, anchor, Uri.parse("model.sfb"));
                 });
 
-        if (getIntent().hasExtra("path") && getIntent().getParcelableExtra("path") != null)
+        if (getIntent().hasExtra("source") && getIntent().getStringExtra("source") != null
+                && getIntent().hasExtra("destination") && getIntent().getStringExtra("destination") != null)
         {
-            this.path = getIntent().getParcelableExtra("path");
+            Node node = dao.getNodeByUniqueId(getIntent().getStringExtra("source"));
+            path = getShortestPath(node, getIntent().getStringExtra("destination"));
         }
-        if (getIntent().hasExtra("list") && getIntent().getSerializableExtra("list") != null)
-        {
-            List<Hop> hops = (List<Hop>) getIntent().getSerializableExtra("list");
-            path.setHops(hops);
-        }
+
         this.serviceIntent = BackgroundScanService.createIntent(this);
         beacons = new ArrayList<>();
         btOn = true;
@@ -169,7 +176,15 @@ public class ARCameraActivity extends AppCompatActivity
     @Override
     protected void onPause()
     {
-        unregisterReceiver(broadcastReceiver);
+        try
+        {
+            unregisterReceiver(broadcastReceiver);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         super.onPause();
     }
 
@@ -261,27 +276,73 @@ public class ARCameraActivity extends AppCompatActivity
         if (beacon != null && BeaconUtility.getUniqueId(beacon).equals(path.getCurrentHop().getDestinationUniqueId())
                 && beacon.getDistance() < 0.7)
         {
-            if (path.isFinalHop())
+            try
             {
-                MessageToast.makeToast(this, R.string.u_have_reached_dest, Toast.LENGTH_LONG).show();
                 stopService(serviceIntent);
+                unregisterReceiver(broadcastReceiver);
+                if (path.isFinalHop())
+                {
+                    MessageToast.makeToast(this, R.string.u_have_reached_dest, Toast.LENGTH_LONG).show();
 
-                final Handler handler = new Handler();
-                handler.postDelayed(this::finish, POST_DELAY_TIME);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(() -> startActivity(new Intent(this, MainActivity.class)), POST_DELAY_TIME);
+                } else
+                {
+                    startService(serviceIntent);
+                    IntentFilter intentFilter = new IntentFilter(BackgroundScanService.DEVICE_DISCOVERED);
+                    registerReceiver(broadcastReceiver, intentFilter);
+                    MessageToast.makeToast(this, R.string.new_hop, Toast.LENGTH_SHORT).show();
+                    path.nextHop();
+                    try
+                    {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
             }
-            else
+            catch (Exception e)
             {
-                MessageToast.makeToast(this, R.string.new_hop, Toast.LENGTH_SHORT).show();
-                path.nextHop();
-                try
-                {
-                    Thread.sleep(2000);
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
+        }
+    }
+
+    private Path getShortestPath(Node currentLocation, String destination)
+    {
+        Dijkstra dijkstra = new Dijkstra(dao, currentLocation);
+        Graph graph = dijkstra.calculateShortestPathFromSource();
+        String destinationUniqueId = dao.getDoctorsByName(destination).get(0).getBeacon_unique_id();
+
+        NodeGraph node = null;
+        for (NodeGraph nodeGraph: graph.getNodes())
+        {
+            if (nodeGraph.getName().equals(destinationUniqueId))
+            {
+                node = nodeGraph;
+            }
+        }
+
+        if (node != null)
+        {
+
+            int distance = 0;
+            for (NodeGraph nodeGraph: node.getShortestPath())
+            {
+                distance += nodeGraph.getDistance();
+            }
+
+            NodeGraph tmp = new NodeGraph(destinationUniqueId);
+            tmp.setDistance(node.getDistance() - distance);
+            node.getShortestPath().add(tmp);
+
+            return new Path(node);
+        }
+        else
+        {
+            MessageToast.makeToast(this, "something went wrong", Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
 }
