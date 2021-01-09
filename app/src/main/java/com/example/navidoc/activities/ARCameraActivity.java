@@ -15,9 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.navidoc.R;
 import com.example.navidoc.utils.ArrowDirections;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Pose;
+import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -25,6 +29,7 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.util.Collection;
 import java.util.Vector;
 
 public class ARCameraActivity extends AppCompatActivity {
@@ -32,6 +37,7 @@ public class ARCameraActivity extends AppCompatActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
+    private boolean isArrowPlaced = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +50,31 @@ public class ARCameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_a_r_camera);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    Anchor anchor = hitResult.createAnchor();
-                    placeObject(arFragment, anchor, Uri.parse("model.sfb"));
-                });
+        arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdate);
+        // necham to zakomentovane pre istotu, ak by sa nieco podrbalo :D
+        // listener vytvara sipku po tuknuti na plane
+//        arFragment.setOnTapArPlaneListener(
+//                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+//                    Anchor anchor = hitResult.createAnchor();
+//                    placeObject(arFragment, anchor, Uri.parse("model.sfb"));
+//                });
+    }
+
+    private void onUpdate(FrameTime frameTime) {
+        if (isArrowPlaced)
+            return;
+
+        Frame frame = arFragment.getArSceneView().getArFrame();
+        Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
+
+        for (Plane plane : planes) {
+            if (plane.getTrackingState() == TrackingState.TRACKING) {
+//                Anchor anchor = plane.createAnchor(plane.getCenterPose()); // sipka sa vytvori v strede plane
+//                float[] currentTranslation = anchor.getPose().getTranslation(); // zistenie x,y,z pozicie sipky v priestore
+                Anchor anchor = plane.createAnchor(Pose.makeTranslation(-1.5705881f, -0.8903943f, -1.7675675f));
+                placeObject(arFragment, anchor, Uri.parse("model.sfb"));
+            }
+        }
     }
 
     private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {
@@ -62,6 +88,8 @@ public class ARCameraActivity extends AppCompatActivity {
                         }
 
                 );
+
+        isArrowPlaced = true;
     }
 
     private void addNodeToScene(ArFragment arFragment, Anchor anchor, Renderable renderable) {
