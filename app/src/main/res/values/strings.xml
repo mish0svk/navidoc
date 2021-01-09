@@ -61,6 +61,6 @@
     <string name="meter">meter</string>
     <string name="meters">meters</string>
     <string name="unavailable_location">This location is current not available</string>
-    <string name="final_dest">You have reached your destination</string>
+    <string name="u_have_reached_dest">You have reached your destination</string>
     <string name="new_hop">New hop</string>
 </resources>

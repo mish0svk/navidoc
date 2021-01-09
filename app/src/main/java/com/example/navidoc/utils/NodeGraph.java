@@ -53,6 +53,7 @@ public class NodeGraph
         return adjacentNodes;
     }
 
+    @SuppressWarnings("unused")
     public void setAdjacentNodes(Map<NodeGraph, Integer> adjacentNodes) {
         this.adjacentNodes = adjacentNodes;
     }

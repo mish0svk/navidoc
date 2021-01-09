@@ -12,17 +12,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class Dijkstra
 {
-    private DAO dao;
-    private NodeGraph source;
+    private final NodeGraph source;
     private List<NodeWithNeighborNodes> allNodes;
     private List<NodeGraph> nodes;
     private Graph graph;
 
     public Dijkstra(DAO dao, Node source)
     {
-        this.dao = dao;
         this.source = new NodeGraph(source.getUniqueId());
         nodes = new ArrayList<>();
         graph = new Graph();
@@ -46,10 +45,7 @@ public class Dijkstra
                 nodeGraph.addDestination(tmp, neighborNode.getDistance());
             });
         }
-        nodes.forEach(node ->
-        {
-            graph.addNode(node);
-        });
+        nodes.forEach(node -> graph.addNode(node));
     }
 
     private int getIndex(Node node)

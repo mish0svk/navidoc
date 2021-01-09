@@ -40,19 +40,9 @@ public class Hop implements Parcelable, Serializable
         }
     };
 
-    public String getSourceUniqueId()
-    {
-        return sourceUniqueId;
-    }
-
     public String getDestinationUniqueId()
     {
         return destinationUniqueId;
-    }
-
-    public int getDistance()
-    {
-        return distance;
     }
 
     @Override

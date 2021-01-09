@@ -69,7 +69,6 @@ public class PlacesActivity extends AppCompatActivity implements OnPlaceListener
         searchField = findViewById(R.id.search_field);
         submitSearch = findViewById(R.id.submit_search);
 
-        //noinspection ConstantConditions
         if (getIntent().hasExtra("searchInput") && getIntent().getStringExtra("searchInput") != null
                 && !getIntent().getStringExtra("searchInput").isEmpty())
         {

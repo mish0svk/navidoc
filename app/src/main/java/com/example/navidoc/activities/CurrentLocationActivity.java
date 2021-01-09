@@ -306,9 +306,4 @@ public class CurrentLocationActivity extends AppCompatActivity
         stopService(serviceIntent);
         super.onBackPressed();
     }
-
-    protected static double calculateAccuracy(double rssi)
-    {
-        return Math.pow(10,  (-69 - rssi) / 20);
-    }
 }

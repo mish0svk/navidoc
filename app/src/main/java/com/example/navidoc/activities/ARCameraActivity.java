@@ -129,6 +129,7 @@ public class ARCameraActivity extends AppCompatActivity
     }
 
 
+    @SuppressLint("ObsoleteSdkInt")
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Log.e(TAG, "Sceneform requires Android N or later");
@@ -262,7 +263,7 @@ public class ARCameraActivity extends AppCompatActivity
         {
             if (path.isFinalHop())
             {
-                MessageToast.makeToast(this, R.string.final_dest, Toast.LENGTH_LONG).show();
+                MessageToast.makeToast(this, R.string.u_have_reached_dest, Toast.LENGTH_LONG).show();
                 stopService(serviceIntent);
 
                 final Handler handler = new Handler();
