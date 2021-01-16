@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.example.navidoc.R;
 import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Node;
+import com.example.navidoc.services.BackgroundOrientationService;
 import com.example.navidoc.services.BackgroundScanService;
 import com.example.navidoc.utils.ArrowDirections;
 import com.example.navidoc.utils.BeaconUtility;
@@ -66,6 +68,7 @@ public class ARCameraActivity extends AppCompatActivity
     private boolean btOn;
     private static final int POST_DELAY_TIME = 5000;
     private DAO dao;
+    private BackgroundOrientationService orientationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +82,8 @@ public class ARCameraActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_a_r_camera);
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
+        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdate);
 
         // necham to zakomentovane pre istotu, ak by sa nieco podrbalo :D
@@ -91,6 +94,17 @@ public class ARCameraActivity extends AppCompatActivity
                     placeObject(arFragment, anchor, Uri.parse("model.sfb"));
                 });*/
 
+
+
+        orientationService = new BackgroundOrientationService(this);
+        try
+        {
+            orientationService.resume();
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "Error");
+        }
 
         if (getIntent().hasExtra("source") && getIntent().getStringExtra("source") != null
                 && getIntent().hasExtra("destination") && getIntent().getStringExtra("destination") != null)
@@ -135,7 +149,10 @@ public class ARCameraActivity extends AppCompatActivity
 
 
 
-    private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri) {
+    private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri)
+    {
+        Log.d(TAG, " ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA");
+        Log.d(TAG, String.valueOf(orientationService.getOrientation().getName()));
         ModelRenderable.builder()
                 .setSource(arFragment.getContext(), uri)
                 .build()
@@ -203,6 +220,7 @@ public class ARCameraActivity extends AppCompatActivity
         IntentFilter intentFilter = new IntentFilter(BackgroundScanService.DEVICE_DISCOVERED);
         registerReceiver(broadcastReceiver, intentFilter);
         super.onResume();
+        orientationService.resume();
     }
 
     @Override
@@ -218,6 +236,7 @@ public class ARCameraActivity extends AppCompatActivity
         }
 
         super.onPause();
+        orientationService.pause();
     }
 
     private void setUpBroadcastReceiver()
@@ -369,7 +388,7 @@ public class ARCameraActivity extends AppCompatActivity
             tmp.setDistance(node.getDistance() - distance);
             node.getShortestPath().add(tmp);
 
-            return new Path(node);
+            return new Path(node, dao);
         }
         else
         {
@@ -377,4 +396,5 @@ public class ARCameraActivity extends AppCompatActivity
             return null;
         }
     }
+
 }

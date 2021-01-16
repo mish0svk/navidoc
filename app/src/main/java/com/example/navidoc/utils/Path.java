@@ -3,6 +3,9 @@ package com.example.navidoc.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.navidoc.database.Converter;
+import com.example.navidoc.database.DAO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +24,16 @@ public class Path implements Parcelable
         this.hops = hops;
     }
 
-    public Path(NodeGraph node)
+    public Path(NodeGraph node, DAO dao)
     {
         this.currentHopIdx = 0;
         this.hops = new ArrayList<>();
         List<NodeGraph> shortestPath = node.getShortestPath();
         for (int idx = 0; idx < shortestPath.size() - 1; idx++)
         {
-            Hop hop = new Hop(shortestPath.get(idx).getName(), shortestPath.get(idx + 1).getName(), shortestPath.get(idx + 1).getDistance());
+            int id = dao.getNodeByUniqueId(shortestPath.get(idx).getName()).getId();
+            Hop hop = new Hop(shortestPath.get(idx).getName(), shortestPath.get(idx + 1).getName(), shortestPath.get(idx + 1).getDistance(),
+                    Converter.toCardinalDirection(dao.getDirectionFromNeighborNode(id, shortestPath.get(idx + 1).getName())));
             hops.add(hop);
         }
     }
