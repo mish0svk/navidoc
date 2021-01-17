@@ -42,9 +42,12 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.Camera;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Sun;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -71,6 +74,7 @@ public class ARCameraActivity extends AppCompatActivity
     private static final int POST_DELAY_TIME = 5000;
     private DAO dao;
     private BackgroundOrientationService orientationService;
+    private double lastBeaconDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +122,7 @@ public class ARCameraActivity extends AppCompatActivity
         this.serviceIntent = BackgroundScanService.createIntent(this);
         beacons = new ArrayList<>();
         btOn = true;
+        lastBeaconDistance = 0.0f;
         setUpBroadcastReceiver();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
@@ -182,11 +187,15 @@ public class ARCameraActivity extends AppCompatActivity
     }
 
     private void onUpdate(FrameTime frameTime) {
+
+
         if (isArrowPlaced)
             return;
 
         Frame frame = arFragment.getArSceneView().getArFrame();
         Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
+
+
 
         for (Plane plane : planes) {
             if (plane.getTrackingState() == TrackingState.TRACKING) {
@@ -198,29 +207,56 @@ public class ARCameraActivity extends AppCompatActivity
         }
     }
 
+    private void removeChildren() {
+        List<com.google.ar.sceneform.Node> children = new ArrayList<>(arFragment.getArSceneView().getScene().getChildren());
+        for (com.google.ar.sceneform.Node node : children) {
+            if (node instanceof AnchorNode) {
+                if (((AnchorNode) node).getAnchor() != null) {
+                    ((AnchorNode) node).getAnchor().detach();
+                }
+            }
+            if (!(node instanceof Camera) && !(node instanceof Sun)) {
+                node.setParent(null);
+            }
+        }
+    }
 
-
-    private void placeObject(ArFragment arFragment, Anchor anchor, Uri uri)
+    private synchronized void placeObject(ArFragment arFragment, Anchor anchor, Uri uri)
     {
-        Log.d(TAG, " ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA");
-        Log.d(TAG, String.valueOf(orientationService.getOrientation().getName()));
-        ModelRenderable.builder()
-                .setSource(arFragment.getContext(), uri)
-                .build()
-                .thenAccept(modelRenderable -> addNodeToScene(arFragment, anchor, modelRenderable))
-                .exceptionally(throwable -> {
-                            Toast.makeText(arFragment.getContext(), "Error:" + throwable.getMessage(), Toast.LENGTH_LONG).show();
-                            return null;
-                        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-                );
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            if(isArrowPlaced)
+                return;
 
-        isArrowPlaced = true;
+            Log.d(TAG, " ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA ORIENTACIA");
+            Log.d(TAG, String.valueOf(orientationService.getOrientation().getName()));
+            removeChildren();
+            ModelRenderable.builder()
+                    .setSource(arFragment.getContext(), uri)
+                    .build()
+                    .thenAccept(modelRenderable -> addNodeToScene(arFragment, anchor, modelRenderable))
+                    .exceptionally(throwable -> {
+                                Toast.makeText(arFragment.getContext(), "Error:" + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                                return null;
+                            }
+
+                    );
+
+            isArrowPlaced = true;
+        }, 2000);
+
+
     }
 
     private void addNodeToScene(ArFragment arFragment, Anchor anchor, Renderable renderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
-        TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
+        com.google.ar.sceneform.Node node = new com.google.ar.sceneform.Node();
         // PRE VAS : TODO :
         // - nastavovanie vektoru sipky
         // - vektor(0,1,0) - tvar sipky
@@ -228,11 +264,11 @@ public class ARCameraActivity extends AppCompatActivity
         //node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
         ArrowDirections arrowDirections = new ArrowDirections(chooseArrowDirection());
         Vector3 vector3 = new Vector3(arrowDirections);
+        renderable.getMaterial().setFloat3("baseColorTint", new Color(android.graphics.Color.rgb(216,88,8)));
         node.setLocalRotation(Quaternion.axisAngle(vector3, arrowDirections.getAngle()));
         node.setRenderable(renderable);
         node.setParent(anchorNode);
         arFragment.getArSceneView().getScene().addChild(anchorNode);
-        node.select();
     }
 
 
@@ -317,6 +353,15 @@ public class ARCameraActivity extends AppCompatActivity
                     beacons.add(device);
                 }
 
+                if (BeaconUtility.getUniqueId(device.getAddress()).equals(path.getCurrentHop().getDestinationUniqueId()))
+                {
+                    if (Math.abs(device.getDistance() - lastBeaconDistance) > 0.20)
+                    {
+                        lastBeaconDistance = device.getDistance();
+                        isArrowPlaced = false;
+                    }
+                }
+
                 handleNextHop();
             }
 
@@ -372,11 +417,11 @@ public class ARCameraActivity extends AppCompatActivity
         return null;
     }
 
-    private void handleNextHop()
+    private synchronized void handleNextHop()
     {
         BeaconDevice beacon = displayClosestBeacon();
         if (beacon != null && BeaconUtility.getUniqueId(beacon).equals(path.getCurrentHop().getDestinationUniqueId())
-                && beacon.getDistance() < 0.7)
+                && beacon.getDistance() < 0.3)
         {
             try
             {
