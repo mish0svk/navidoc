@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.MainActivity;
 import com.example.navidoc.R;
+import com.example.navidoc.database.CardinalDirection;
+import com.example.navidoc.database.Converter;
 import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
 import com.example.navidoc.database.Node;
@@ -130,6 +132,55 @@ public class ARCameraActivity extends AppCompatActivity
         registerReceiver(broadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
+//    private boolean isWorldPositionVisible()
+//    {
+//
+//        Matrix matrix = new Matrix();
+//        Camera camera = arFragment.getArSceneView().getScene().getCamera();
+//        Vector3 worldPosition = camera.getWorldPosition();
+//        Matrix.multiply(camera.getProjectionMatrix(), camera.getViewMatrix(), matrix);
+//        float x = worldPosition.x;
+//        float y = worldPosition.y;
+//        float z = worldPosition.z;
+//
+//        float tmp = x * matrix.data[3] + y * matrix.data[7] + z * matrix.data[11] + 1.0f * matrix.data[15];
+//        if (tmp < 0f)
+//        {
+//            return false;
+//        }
+//
+//        Vector3 vector3 = new Vector3();
+//        vector3.x = y * matrix.data[0] + y * matrix.data[4] + z * matrix.data[8] + 1.0f * matrix.data[12];
+//        vector3.x = vector3.x / tmp;
+//        if (vector3.x < -1f || vector3.x > 1f)
+//        {
+//            return false;
+//        }
+//        vector3.y = x * matrix.data[1] + y * matrix.data[5] + z * matrix.data[9] + 1.0f * matrix.data[13];
+//        vector3.y = vector3.y / tmp;
+//
+//        return vector3.y >= -1f && vector3.y <= 1f;
+//    }
+
+    private ArrowDirections.VectorDirection chooseArrowDirection()
+    {
+        CardinalDirection currentDirection = orientationService.getOrientation();
+        CardinalDirection destDirection = path.getCurrentHop().getCardinalDirection();
+        int degree = 0;
+        int idx = Converter.fromDirectionToDegree(currentDirection);
+        while (idx != Converter.fromDirectionToDegree(destDirection))
+        {
+            degree += 45;
+            idx += 45;
+            if (idx >= 360)
+            {
+                idx = 0;
+            }
+        }
+
+        return Converter.fromDegreeToArrowDirection(degree);
+    }
+
     private void onUpdate(FrameTime frameTime) {
         if (isArrowPlaced)
             return;
@@ -175,7 +226,7 @@ public class ARCameraActivity extends AppCompatActivity
         // - vektor(0,1,0) - tvar sipky
         // - 180 - smer sipky(uhol "nase ENUM")
         //node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
-        ArrowDirections arrowDirections = new ArrowDirections(ArrowDirections.VectorDirection.BACK);
+        ArrowDirections arrowDirections = new ArrowDirections(chooseArrowDirection());
         Vector3 vector3 = new Vector3(arrowDirections);
         node.setLocalRotation(Quaternion.axisAngle(vector3, arrowDirections.getAngle()));
         node.setRenderable(renderable);

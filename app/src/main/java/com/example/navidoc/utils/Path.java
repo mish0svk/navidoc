@@ -33,7 +33,7 @@ public class Path implements Parcelable
         {
             int id = dao.getNodeByUniqueId(shortestPath.get(idx).getName()).getId();
             Hop hop = new Hop(shortestPath.get(idx).getName(), shortestPath.get(idx + 1).getName(), shortestPath.get(idx + 1).getDistance(),
-                    Converter.toCardinalDirection(dao.getDirectionFromNeighborNode(id, shortestPath.get(idx + 1).getName())));
+                    Converter.fromStringToCardinalDirection(dao.getDirectionFromNeighborNode(id, shortestPath.get(idx + 1).getName())));
             hops.add(hop);
         }
     }
