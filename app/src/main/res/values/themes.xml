@@ -4,7 +4,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/secondary_black_LM</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="28">@color/primary_orange_button_LM</item>
         <!-- Customize your theme here. -->
         <item name="drawerArrowStyle">@style/Theme.NaviDoc.DrawerToggle</item>
 <!--        <item name="buttonStyle">@style/Theme.NaviDoc.Button</item>-->
