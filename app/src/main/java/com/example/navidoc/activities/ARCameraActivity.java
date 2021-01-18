@@ -6,6 +6,7 @@ import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -20,10 +21,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.navidoc.MainActivity;
 import com.example.navidoc.R;
+import com.example.navidoc.adapters.Place;
 import com.example.navidoc.database.DAO;
 import com.example.navidoc.database.DatabaseHelper;
+import com.example.navidoc.database.Department;
+import com.example.navidoc.database.Doctor;
 import com.example.navidoc.database.Node;
 import com.example.navidoc.services.BackgroundScanService;
+import com.example.navidoc.utils.AbstractDialog;
 import com.example.navidoc.utils.ArrowDirections;
 import com.example.navidoc.utils.BeaconUtility;
 import com.example.navidoc.utils.Dijkstra;
@@ -66,6 +71,7 @@ public class ARCameraActivity extends AppCompatActivity
     private boolean btOn;
     private static final int POST_DELAY_TIME = 5000;
     private DAO dao;
+    private Doctor doctor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,10 +320,16 @@ public class ARCameraActivity extends AppCompatActivity
                 unregisterReceiver(broadcastReceiver);
                 if (path.isFinalHop())
                 {
-                    MessageToast.makeToast(this, R.string.u_have_reached_dest, Toast.LENGTH_LONG).show();
+                    this.doctor = new Doctor();
+                    this.doctor = dao.getDoctorByBeaconUniqueId(path.getCurrentHop().getDestinationUniqueId());
 
-                    final Handler handler = new Handler();
-                    handler.postDelayed(() -> startActivity(new Intent(this, MainActivity.class)), POST_DELAY_TIME);
+                    String navigateTo = getResources().getString(R.string.u_have_reached_dest) + doctor.getAmbulance_name()
+                            +"("+ doctor.getName() + ")";
+
+                    AbstractDialog dialog = AbstractDialog.getInstance();
+                    dialog.newBuilderInstance(this).setTitle(R.string.app_name).setMessage(navigateTo)
+                            .setOKbutton().getBuilder()
+                            .setNeutralButton("DETAIL", this::onClick).create().show();
                 } else
                 {
                     startService(serviceIntent);
@@ -339,6 +351,19 @@ public class ARCameraActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+    }
+
+    private void onClick(DialogInterface dialogInterface, int i) {
+        Department doctorDepartment = dao.getDepartmentByID(doctor.getDepartment_id());
+
+        Place place = new Place(doctor.getAmbulance_name(),doctorDepartment.getName(),doctorDepartment.getFloor(),
+                doctor.getName(),doctor.getStart_time(),doctor.getEnd_time(),doctor.getPhone_number(),
+                doctor.getWeb_site(),doctor.getIsFavorite());
+
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("selected_place", place);
+        intent.putExtra("activity", "Places");
+        startActivity(intent);
     }
 
     private Path getShortestPath(Node currentLocation, String destination)

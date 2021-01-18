@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.navidoc.MainActivity;
 import com.example.navidoc.R;
 import com.example.navidoc.activities.ARCameraActivity;
 import com.example.navidoc.adapters.Place;
@@ -167,6 +168,15 @@ public class AbstractDialog
 
         return instance;
     }
+
+    public AbstractDialog setOKbutton() {
+        builder.setPositiveButton("OK", (dialog, which) ->
+        {
+            builder.getContext().startActivity(new Intent(builder.getContext(), MainActivity.class));
+        });
+        return instance;
+    }
+
 
     @SuppressLint("SimpleDateFormat")
     public void addNewHistory()

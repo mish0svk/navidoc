@@ -39,6 +39,10 @@ public class Doctor
         this.beacon_unique_id = beacon_unique_id;
     }
 
+    public Doctor() {
+
+    }
+
     public void setDoctor_ID(int doctor_ID)
     {
         Doctor_ID = doctor_ID;
