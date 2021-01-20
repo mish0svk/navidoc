@@ -8,13 +8,14 @@ public class ArrowDirections extends Vector3{
 
     public enum VectorDirection{
         FRONT,
-        BACK,
+        FRONT_RIGHT,
         RIGHT,
+        BACK_RIGHT,
+        BACK,
+        BACK_LEFT,
         LEFT,
-        FRONTLEFT,
-        FRONTRIGHT,
-        BACKLEFT,
-        BACKRIGHT
+        FRONT_LEFT
+
     }
     public int angle = 0;
     public ArrowDirections(VectorDirection vectorDirection){
@@ -33,16 +34,16 @@ public class ArrowDirections extends Vector3{
             case LEFT:
                 angle = 315;
                 break;
-            case FRONTLEFT:
+            case FRONT_LEFT:
                 angle = 270;
                 break;
-            case FRONTRIGHT:
+            case FRONT_RIGHT:
                 angle = 180;
                 break;
-            case BACKLEFT:
+            case BACK_LEFT:
                 angle = 360;
                 break;
-            case BACKRIGHT:
+            case BACK_RIGHT:
                 angle = 90;
                 break;
         }

@@ -155,4 +155,7 @@ public interface DAO
     @Transaction
     @Query("SELECT * FROM neighbornode WHERE nodeId = :nodeId")
     List<NeighborNode> getNeighborNodesByNodeId(int nodeId);
+
+    @Query("SELECT cardinalDirection FROM neighbornode WHERE nodeId = :nodeId AND uniqueId = :uniqueId")
+    String getDirectionFromNeighborNode(int nodeId, String uniqueId);
 }

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -25,6 +26,7 @@ public class BackgroundScanService extends Service
     public static final String EXTRA_DEVICE = "DeviceExtra";
     public static final String EXTRA_DEVICE_COUNT = "DevicesCountExtra";
     public static final String DEVICE_LOST = "DEVICE_LOST_ACTION";
+    private static final String TAG = "SERVICE";
 
     private ProximityManager proximityManager;
     private boolean isRunning;
@@ -72,17 +74,25 @@ public class BackgroundScanService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        if (STOP_SERVICE.equals(intent.getAction()))
+        try
         {
-            stopSelf();
-            return START_NOT_STICKY;
+            if (STOP_SERVICE.equals(intent.getAction()))
+            {
+                stopSelf();
+                return START_NOT_STICKY;
+            }
+
+            if (!this.isRunning)
+            {
+                this.proximityManager.connect(() -> this.proximityManager.startScanning());
+                this.isRunning = true;
+            }
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "onStartCommand: ");
         }
 
-        if (!this.isRunning)
-        {
-            this.proximityManager.connect(() -> this.proximityManager.startScanning());
-            this.isRunning = true;
-        }
 
         return START_STICKY;
     }

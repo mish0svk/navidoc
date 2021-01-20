@@ -11,25 +11,15 @@ public class NeighborNode
     int neighborId;
     String uniqueId;
     int distance;
-    boolean active;
     int nodeId;
-    int nodeNumber;
+    String cardinalDirection;
 
-    public NeighborNode(String uniqueId, int distance, boolean active, int nodeId, int nodeNumber)
+    public NeighborNode(String uniqueId, String cardinalDirection, int distance, int nodeId)
     {
         this.uniqueId = uniqueId;
+        this.cardinalDirection = cardinalDirection;
         this.distance = distance;
-        this.active = active;
         this.nodeId = nodeId;
-        this.nodeNumber = nodeNumber;
-    }
-
-    public int getNodeNumber() {
-        return nodeNumber;
-    }
-
-    public void setNodeNumber(int nodeNumber) {
-        this.nodeNumber = nodeNumber;
     }
 
     public int getNodeId()
@@ -72,24 +62,25 @@ public class NeighborNode
         this.distance = distance;
     }
 
-    public boolean isActive()
+    public String getCardinalDirection()
     {
-        return active;
+        return cardinalDirection;
     }
 
-    public void setActive(boolean active)
+    public void setCardinalDirection(String cardinalDirection)
     {
-        this.active = active;
+        this.cardinalDirection = cardinalDirection;
     }
 
     @Override
     public String toString()
     {
         return "NeighborNode{" +
-                "id=" + neighborId +
-                ", mac='" + uniqueId + '\'' +
+                "neighborId=" + neighborId +
+                ", uniqueId='" + uniqueId + '\'' +
                 ", distance=" + distance +
-                ", active=" + active +
+                ", nodeId=" + nodeId +
+                ", cardinalDirection='" + cardinalDirection + '\'' +
                 '}';
     }
 }
