@@ -46,7 +46,7 @@ public class BackgroundScanService extends Service
     private void setupProximityManager()
     {
         this.proximityManager = ProximityManagerFactory.create(this);
-        this.proximityManager.configuration().scanMode(ScanMode.BALANCED).scanPeriod(ScanPeriod.RANGING)
+        this.proximityManager.configuration().scanMode(ScanMode.LOW_LATENCY).scanPeriod(ScanPeriod.RANGING)
         .deviceUpdateCallbackInterval(1L);
 
         this.proximityManager.setIBeaconListener(new SimpleIBeaconListener()

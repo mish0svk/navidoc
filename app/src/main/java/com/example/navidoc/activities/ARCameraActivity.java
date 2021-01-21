@@ -192,24 +192,25 @@ public class ARCameraActivity extends AppCompatActivity
         return Converter.fromDegreeToArrowDirection(degree);
     }
 
-    private void onUpdate(FrameTime frameTime) {
-
-
+    private synchronized void onUpdate(FrameTime frameTime) {
         if (isArrowPlaced)
             return;
 
         Frame frame = arFragment.getArSceneView().getArFrame();
         Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
 
-
-
-        for (Plane plane : planes) {
-            if (plane.getTrackingState() == TrackingState.TRACKING) {
-                Anchor anchor = plane.createAnchor(plane.getCenterPose()); // sipka sa vytvori v strede plane
-                //float[] currentTranslation = anchor.getPose().getTranslation(); // zistenie x,y,z pozicie sipky v priestore
-                //Anchor customAnchor = plane.createAnchor(Pose.makeTranslation(-1.5705881f, -0.8903943f, -1.7675675f)); // sipka sa vytvori na danych x,y,z suradniciach
-                placeObject(arFragment, anchor, Uri.parse("model.sfb"));
+        try {
+            for (Plane plane : planes) {
+                if (plane.getTrackingState() == TrackingState.TRACKING) {
+                    Anchor anchor = plane.createAnchor(plane.getCenterPose()); // sipka sa vytvori v strede plane
+                    //float[] currentTranslation = anchor.getPose().getTranslation(); // zistenie x,y,z pozicie sipky v priestore
+                    //Anchor customAnchor = plane.createAnchor(Pose.makeTranslation(-1.5705881f, -0.8903943f, -1.7675675f)); // sipka sa vytvori na danych x,y,z suradniciach
+                    placeObject(arFragment, anchor, Uri.parse("model.sfb"));
+                }
             }
+        }
+        catch (Exception ex) {
+            isArrowPlaced = false;
         }
     }
 
@@ -251,13 +252,9 @@ public class ARCameraActivity extends AppCompatActivity
                                 Toast.makeText(arFragment.getContext(), "Error:" + throwable.getMessage(), Toast.LENGTH_LONG).show();
                                 return null;
                             }
-
                     );
-
             isArrowPlaced = true;
-        }, 2000);
-
-
+        }, 1500);
     }
 
     private void addNodeToScene(ArFragment arFragment, Anchor anchor, Renderable renderable) {
@@ -270,7 +267,8 @@ public class ARCameraActivity extends AppCompatActivity
         //node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
         ArrowDirections arrowDirections = new ArrowDirections(chooseArrowDirection());
         Vector3 vector3 = new Vector3(arrowDirections);
-        renderable.getMaterial().setFloat3("baseColorTint", new Color(android.graphics.Color.rgb(216,88,8)));
+        // original RGB values - 216, 88, 8
+        renderable.getMaterial().setFloat3("baseColorTint", new Color(android.graphics.Color.rgb(255,151, 23)));
         node.setLocalRotation(Quaternion.axisAngle(vector3, arrowDirections.getAngle()));
         node.setRenderable(renderable);
         node.setParent(anchorNode);
@@ -361,7 +359,7 @@ public class ARCameraActivity extends AppCompatActivity
 
                 if (BeaconUtility.getUniqueId(device.getAddress()).equals(path.getCurrentHop().getDestinationUniqueId()))
                 {
-                    if (Math.abs(device.getDistance() - lastBeaconDistance) > 0.20)
+                    if (Math.abs(device.getDistance() - lastBeaconDistance) > 0.10)
                     {
                         lastBeaconDistance = device.getDistance();
                         isArrowPlaced = false;
@@ -419,7 +417,6 @@ public class ARCameraActivity extends AppCompatActivity
 
             return closestDevice;
         }
-
         return null;
     }
 
@@ -456,13 +453,13 @@ public class ARCameraActivity extends AppCompatActivity
                     registerReceiver(broadcastReceiver, intentFilter);
                     MessageToast.makeToast(this, R.string.new_hop, Toast.LENGTH_SHORT).show();
                     path.nextHop();
-                    try
-                    {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
+//                    try
+//                    {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e)
+//                    {
+//                        e.printStackTrace();
+//                    }
                 }
             }
             catch (Exception e)
@@ -484,7 +481,6 @@ public class ARCameraActivity extends AppCompatActivity
         intent.putExtra("activity", "Places");
         startActivity(intent);
     }
-
 
     private Path getShortestPath(Node currentLocation, String destination)
     {
@@ -522,5 +518,4 @@ public class ARCameraActivity extends AppCompatActivity
             return null;
         }
     }
-
 }
