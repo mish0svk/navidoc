@@ -68,4 +68,11 @@ public class Hop implements Parcelable, Serializable
         dest.writeString(destinationUniqueId);
         dest.writeInt(distance);
     }
+
+    @Override
+    public String toString() {
+        return "Hop: " +
+                destinationUniqueId +
+                '\n';
+    }
 }

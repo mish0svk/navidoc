@@ -62,7 +62,6 @@ public class DatabaseInitialInsert
         dao.insertDoctor(new Doctor("Iveta Rovna","Gynekologicka Ambulancia","0908 312 789","Rovna@gmail.com",33,"www.Rovna.com","06:00","13:00",0, dao.getDepartmentIdByName("Gynekologia"),0, null));
         dao.insertDoctor(new Doctor("Julius Bentner","Gynekologicka Ambulancia","0908 312 789","Bentner@gmail.com",34,"www.Bentner.com","07:00","14:00",0, dao.getDepartmentIdByName("Gynekologia"),0, "UuGhGx"));
 
-
         //inserting nodes
         dao.insertNode(new Node("UuehLL", true, 0));
         dao.insertNode(new Node("UutvWt", true,1));
@@ -70,47 +69,20 @@ public class DatabaseInitialInsert
         dao.insertNode(new Node("UuGhGx", true,3));
         dao.insertNode(new Node("UuaJiX", true,4));
 
-//        //inserting neighbors - original
-//        //inserting neighbors to node UuehLL
-//        dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.NORTH), 2,  dao.getNodeByUniqueId("UuehLL").getId()));
-//        dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.NORTH), 4, dao.getNodeByUniqueId("UuehLL").getId()));
-//
-//        //inserting neighbors to node UutvWt
-//        dao.insertNeighborNode(new NeighborNode("UuehLL", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 2, dao.getNodeByUniqueId("UutvWt").getId()));
-//        dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 1, dao.getNodeByUniqueId("UutvWt").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.SOUTH),3, dao.getNodeByUniqueId("UutvWt").getId()));
-//
-//        //inserting neighbors to node Uujp66
-//        dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 1, dao.getNodeByUniqueId("Uujp66").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UuehLL", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 4, dao.getNodeByUniqueId("Uujp66").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 1, dao.getNodeByUniqueId("Uujp66").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UuaJiX", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 2, dao.getNodeByUniqueId("Uujp66").getId()));
-//
-//        //inserting neighbors to node UuGhGx
-//        dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.NORTH), 1, dao.getNodeByUniqueId("UuGhGx").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 3, dao.getNodeByUniqueId("UuGhGx").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UuaJiX", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 3, dao.getNodeByUniqueId("UuGhGx").getId()));
-//
-//        //inserting neighbors to node UuaJiX
-//        dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 2, dao.getNodeByUniqueId("UuaJiX").getId()));
-//        dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 3, dao.getNodeByUniqueId("UuaJiX").getId()));
-
-        //inserting neighbors - kuco edit
         //inserting neighbors to node UuehLL
-        dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.NORTH), 1,  dao.getNodeByUniqueId("UuehLL").getId()));
-//        dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.NORTH), 4, dao.getNodeByUniqueId("UuehLL").getId()));
+        dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.NORTH_WEST), 1,  dao.getNodeByUniqueId("UuehLL").getId()));
 
         //inserting neighbors to node UutvWt
         dao.insertNeighborNode(new NeighborNode("UuehLL", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 1, dao.getNodeByUniqueId("UutvWt").getId()));
         dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.WEST), 1, dao.getNodeByUniqueId("UutvWt").getId()));
 
         //inserting neighbors to node Uujp66
-        dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.SOUTH), 1, dao.getNodeByUniqueId("Uujp66").getId()));
+        dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.SOUTH_EAST), 1, dao.getNodeByUniqueId("Uujp66").getId()));
         dao.insertNeighborNode(new NeighborNode("UutvWt", Converter.fromCardinalDirection(CardinalDirection.EAST), 1, dao.getNodeByUniqueId("Uujp66").getId()));
 
         //inserting neighbors to node UuGhGx
         dao.insertNeighborNode(new NeighborNode("Uujp66", Converter.fromCardinalDirection(CardinalDirection.NORTH), 1, dao.getNodeByUniqueId("UuGhGx").getId()));
-        dao.insertNeighborNode(new NeighborNode("UuaJiX", Converter.fromCardinalDirection(CardinalDirection.WEST), 1, dao.getNodeByUniqueId("UuGhGx").getId()));
+        dao.insertNeighborNode(new NeighborNode("UuaJiX", Converter.fromCardinalDirection(CardinalDirection.SOUTH_WEST), 1, dao.getNodeByUniqueId("UuGhGx").getId()));
 
         //inserting neighbors to node UuaJiX
         dao.insertNeighborNode(new NeighborNode("UuGhGx", Converter.fromCardinalDirection(CardinalDirection.EAST), 1, dao.getNodeByUniqueId("UuaJiX").getId()));
